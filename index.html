@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f7f5f0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16171a" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="오늘 뭐 먹지">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <title>오늘 뭐 먹지 · 구내식당</title>
+</head>
+<body>
+  <header class="topbar"><a href="#/" class="brand">오늘 뭐 먹지</a></header>
+  <main class="content" id="main"><div class="skeleton"></div></main>
+  <nav class="tabbar">
+    <a href="#/" class="tab" data-tab="home"><span>🍚</span>오늘</a>
+    <a href="#/week" class="tab" data-tab="week"><span>📅</span>주간</a>
+    <a href="#/history" class="tab" data-tab="history"><span>🗂</span>이력</a>
+  </nav>
+
+  <dialog id="confirm" class="dialog">
+    <h2>덮어쓸까요?</h2>
+    <p id="confirm-msg"></p>
+    <div class="dialog-actions">
+      <button type="button" class="btn" value="cancel">취소</button>
+      <button type="button" class="btn btn-danger" value="ok">덮어쓰기</button>
+    </div>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
