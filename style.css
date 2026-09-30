@@ -57,7 +57,7 @@ img { display: block; max-width: 100%; }
 .content { max-width: 1200px; margin: 0 auto; padding: 4px 16px calc(84px + env(safe-area-inset-bottom)); }
 .tabbar {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
-  display: grid; grid-template-columns: repeat(3, 1fr);
+  display: grid; grid-template-columns: repeat(2, 1fr);
   background: var(--surface); border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom);
 }

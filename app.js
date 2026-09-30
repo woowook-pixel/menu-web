@@ -20,7 +20,6 @@
   const dow = (iso) => toUTC(iso).getUTCDay();
   const isWeekend = (iso) => dow(iso) === 0 || dow(iso) === 6;
   const mondayOf = (iso) => addDays(iso, -((dow(iso) + 6) % 7));
-  const nextWeekday = (iso) => { let d = addDays(iso, 1); while (isWeekend(d)) d = addDays(d, 1); return d; };
   const fmt = (iso, wd = true) => { const [, m, d] = iso.split('-').map(Number); return `${m}월 ${d}일${wd ? ` (${WEEKDAYS[dow(iso)]})` : ''}`; };
   const weekRange = (ws) => `${fmt(ws, false)} ~ ${fmt(addDays(ws, 4), false)}`;
 
@@ -66,31 +65,35 @@
       <p class="notice-title">${weekend ? '오늘은 식당이 쉬는 날이에요' : '아직 식단이 등록되지 않았어요'}</p>
       <p class="muted">다음 주 식단은 일요일 저녁에 올라옵니다</p></div>`;
 
-  // ── 화면: 오늘 ─────────────────────────────────────────
+  // ── 화면: 오늘 (오늘 메뉴만) ─────────────────────────────
   function viewHome() {
-    const t = todayKst(), nxt = nextWeekday(t);
-    const today = dayEntry(t), next = dayEntry(nxt);
-    const label = nxt === addDays(t, 1) ? '내일' : '다음 영업일';
+    const t = todayKst();
+    const today = dayEntry(t);
     return `
       <p class="home-date">${fmt(t)}</p>
-      ${today ? `<section class="menu menu-lg"><h1>오늘의 메뉴</h1>${crop(today.ws, today.i)}</section>` : notice(isWeekend(t))}
-      ${next ? `<section class="menu menu-sm"><h2>${label} · ${fmt(nxt)}</h2>${crop(next.ws, next.i, 'crop-sm')}</section>` : ''}`;
+      ${today ? `<section class="menu menu-lg"><h1>오늘의 메뉴</h1>${crop(today.ws, today.i)}</section>` : notice(isWeekend(t))}`;
   }
 
-  // ── 화면: 주간 ─────────────────────────────────────────
+  // ── 화면: 주간 (이번 주 ~ 올라와 있는 다음 주까지만) ───────────
+  const adminLink = '<p class="center admin-link"><a class="link small" href="#/upload">담당자: 식단표 업로드</a></p>';
+
   function viewWeek(params) {
     const t = todayKst();
-    const def = isWeekend(t) ? mondayOf(addDays(t, 2)) : mondayOf(t); // 주말엔 다음 주
-    const ws = params.get('w') ? mondayOf(params.get('w')) : def;
+    const thisWeek = mondayOf(t);
+    // 주말에는 다음 주 식단이 올라와 있으면 다음 주를 먼저 보여줌
+    const def = isWeekend(t) && index.weeks[addDays(thisWeek, 7)] ? addDays(thisWeek, 7) : thisWeek;
+    let ws = params.get('w') ? mondayOf(params.get('w')) : def;
+    if (ws < thisWeek) ws = thisWeek; // 지난 주는 보여주지 않음
     const w = index.weeks[ws];
+    const prev = ws > thisWeek ? addDays(ws, -7) : null;
+    const next = index.weeks[addDays(ws, 7)] ? addDays(ws, 7) : null;
     const nav = `
       <div class="week-nav">
-        <a class="btn btn-icon" href="#/week?w=${addDays(ws, -7)}" aria-label="이전 주">‹</a>
-        <div class="week-title"><strong>${weekRange(ws)}</strong>
-          ${ws !== def ? `<a class="link small" href="#/week">${isWeekend(t) ? '다음 주로' : '이번 주로'}</a>` : ''}</div>
-        <a class="btn btn-icon" href="#/week?w=${addDays(ws, 7)}" aria-label="다음 주">›</a>
+        ${prev ? `<a class="btn btn-icon" href="#/week?w=${prev}" aria-label="이전 주">‹</a>` : '<span class="btn-icon"></span>'}
+        <div class="week-title"><strong>${weekRange(ws)}</strong><span class="muted small">${ws === thisWeek ? '이번 주' : '다음 주'}</span></div>
+        ${next ? `<a class="btn btn-icon" href="#/week?w=${next}" aria-label="다음 주">›</a>` : '<span class="btn-icon"></span>'}
       </div>`;
-    if (!w) return nav + notice(false);
+    if (!w) return nav + notice(false) + adminLink;
     const days = DAY_NAMES.map((_, i) => {
       const d = addDays(ws, i);
       const closed = (w.closed || []).includes(i);
@@ -99,18 +102,7 @@
         ${closed ? '<p class="closed">휴무</p>' : crop(ws, i)}</section>`;
     }).join('');
     return `${nav}<div class="week-grid">${days}</div>
-      <p class="center"><a class="link small" href="${esc(imageUrl(ws, w))}" target="_blank" rel="noopener">원본 식단표 보기</a></p>`;
-  }
-
-  // ── 화면: 이력 ─────────────────────────────────────────
-  function viewHistory() {
-    const thisWeek = mondayOf(todayKst());
-    const weeks = Object.keys(index.weeks).sort().reverse();
-    const list = weeks.length
-      ? `<ul class="history">${weeks.map((ws) => `<li><a href="#/week?w=${ws}"><span>${weekRange(ws)}</span>
-          ${ws === thisWeek ? '<span class="chip">이번 주</span>' : ws > thisWeek ? '<span class="chip chip-muted">예정</span>' : ''}</a></li>`).join('')}</ul>`
-      : '<p class="muted">저장된 식단이 없습니다.</p>';
-    return `<h1>식단 이력</h1>${list}<p class="center admin-link"><a class="link small" href="#/upload">담당자: 식단표 업로드</a></p>`;
+      <p class="center"><a class="link small" href="${esc(imageUrl(ws, w))}" target="_blank" rel="noopener">원본 식단표 보기</a></p>${adminLink}`;
   }
 
   // ── GitHub API (담당자 전용) ─────────────────────────────
@@ -158,6 +150,12 @@
         if (e.status === 404) return null;
         throw e;
       }
+    },
+    deleteFile(path, sha, message) {
+      return this.req(`/repos/${this.repo()}/contents/${path}`, {
+        method: 'DELETE',
+        body: JSON.stringify({ message, sha, branch: this.branch }),
+      });
     },
     putFile(path, base64, message, sha) {
       return this.req(`/repos/${this.repo()}/contents/${path}`, {
@@ -423,7 +421,18 @@
           layout: { cols: layout.cols.map((x) => +x.toFixed(4)), top: +layout.top.toFixed(4), bottom: +layout.bottom.toFixed(4) },
           closed: [...closed].sort(), uploaded_at: now.toISOString(), v: now.getTime(),
         };
+        // 지난 주 식단은 보관하지 않음: 이번 주보다 이전 항목을 목록에서 빼고 사진도 지운다
+        const thisWeek = mondayOf(todayKst());
+        const expired = Object.keys(idx.weeks).filter((k) => k < thisWeek);
+        const expiredImages = expired.map((k) => idx.weeks[k].image).filter(Boolean);
+        expired.forEach((k) => delete idx.weeks[k]);
         await gh.putFile('data/index.json', utf8ToB64(JSON.stringify(idx, null, 2) + '\n'), `식단 목록 갱신 ${ws}`, idxFile?.sha);
+        for (const p of expiredImages) {
+          try {
+            const f = await gh.getFile(p);
+            if (f) await gh.deleteFile(p, f.sha, `지난 식단 삭제 ${p}`);
+          } catch {} // 정리는 실패해도 저장 결과에는 영향 없음
+        }
 
         index = idx;
         localImages[ws] = img.dataUrl;
@@ -452,10 +461,10 @@
     const [path, qs] = (location.hash.slice(1) || '/').split('?');
     const params = new URLSearchParams(qs);
     pageHandlers.paste = pageHandlers.drop = null;
-    document.querySelectorAll('.tab').forEach((a) => a.classList.toggle('active', a.dataset.tab === ({ '/': 'home', '/week': 'week', '/history': 'history' })[path]));
+    document.querySelectorAll('.tab').forEach((a) => a.classList.toggle('active', a.dataset.tab === ({ '/': 'home', '/week': 'week' })[path]));
     if (!index) await loadIndex();
 
-    const views = { '/': viewHome, '/week': viewWeek, '/history': viewHistory, '/upload': viewUpload };
+    const views = { '/': viewHome, '/week': viewWeek, '/upload': viewUpload };
     const view = views[path] || viewHome;
     $main.innerHTML = (flash ? `<p class="alert alert-ok">${esc(flash)}</p>` : '') + view(params);
     flash = null;
