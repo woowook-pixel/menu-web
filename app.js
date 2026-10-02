@@ -40,6 +40,7 @@
   const imageUrl = (ws, w) => localImages[ws] || `${w.image}?v=${w.v}`;
 
   // 원본 사진의 i번째 칸만 보이도록 CSS 배경으로 잘라 표시
+  // 미리보기(crop-thumb)는 버튼 안에 들어가므로 링크가 아닌 span으로 만든다
   function crop(ws, i, cls = '') {
     const w = index.weeks[ws];
     const { cols, top, bottom } = w.layout;
@@ -47,8 +48,9 @@
     const px = cw >= 1 ? 0 : (cols[i] / (1 - cw)) * 100;
     const py = ch >= 1 ? 0 : (top / (1 - ch)) * 100;
     const url = imageUrl(ws, w);
-    return `<a class="crop ${cls}" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${fmt(addDays(ws, i))} 식단 크게 보기"
-      style="aspect-ratio:${(cw * w.width) / (ch * w.height)};background-image:url('${esc(url)}');background-size:${100 / cw}% ${100 / ch}%;background-position:${px}% ${py}%"></a>`;
+    const style = `aspect-ratio:${(cw * w.width) / (ch * w.height)};background-image:url('${esc(url)}');background-size:${100 / cw}% ${100 / ch}%;background-position:${px}% ${py}%`;
+    if (cls.includes('crop-thumb')) return `<span class="crop ${cls}" style="${style}"></span>`;
+    return `<a class="crop ${cls}" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${fmt(addDays(ws, i))} 식단 원본 보기" style="${style}"></a>`;
   }
 
   function dayEntry(iso) {
@@ -60,22 +62,41 @@
     return { ws, i };
   }
 
-  const notice = (weekend) => `
-    <div class="notice"><div class="notice-icon">🍱</div>
-      <p class="notice-title">${weekend ? '오늘은 식당이 쉬는 날이에요' : '아직 식단이 등록되지 않았어요'}</p>
-      <p class="muted">다음 주 식단은 일요일 저녁에 올라옵니다</p></div>`;
+  const ICON_FORK = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v8.5a2.5 2.5 0 0 1-1 2V22H4.5v-9.5a2.5 2.5 0 0 1-1-2V2H5v7h.75V2h1.5v7H8V2zm9.5 0C18.4 2 20 4.2 20 7.5c0 2.6-1 4.4-2.5 5V22H16V2z" fill="currentColor"/></svg>`;
+  const longDate = (iso) => { const [, m, d] = iso.split('-').map(Number); return `${m}월 ${d}일 ${WEEKDAYS[dow(iso)]}요일`; };
+
+  const empty = (weekend) => `
+    <div class="empty">
+      <div class="empty-icon">${ICON_FORK}</div>
+      <p class="empty-title">${weekend ? '오늘은 식당이 쉬는 날이에요' : '식단이 아직 없어요'}</p>
+      <p class="empty-sub">다음 주 식단은 일요일 저녁에 올라옵니다</p>
+    </div>`;
 
   // ── 화면: 오늘 (오늘 메뉴만) ─────────────────────────────
   function viewHome() {
     const t = todayKst();
     const today = dayEntry(t);
     return `
-      <p class="home-date">${fmt(t)}</p>
-      ${today ? `<section class="menu menu-lg"><h1>오늘의 메뉴</h1>${crop(today.ws, today.i)}</section>` : notice(isWeekend(t))}`;
+      <header class="large-title">
+        <p class="eyebrow">${longDate(t)}</p>
+        <h1 data-title="오늘">오늘의 메뉴</h1>
+      </header>
+      ${today ? `<div class="card card-photo">${crop(today.ws, today.i)}</div>` : empty(isWeekend(t))}`;
   }
 
-  // ── 화면: 주간 (이번 주 ~ 올라와 있는 다음 주까지만) ───────────
-  const adminLink = '<p class="center admin-link"><a class="link small" href="#/upload">담당자: 식단표 업로드</a></p>';
+  // ── 화면: 이번 주 (캘린더 주 보기) ─────────────────────────
+  // 위: 요일·날짜 줄 + 5일 칸 미리보기 (전체 한눈에), 아래: 고른 날 크게
+  const adminLink = '<p class="footnote"><a href="#/upload">담당자: 식단표 업로드</a></p>';
+  const CHEVRON_L = '<svg viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const CHEVRON_R = '<svg viewBox="0 0 12 20" aria-hidden="true"><path d="m2 2 8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function weekTitle(ws) {
+    const [, m1] = ws.split('-').map(Number);
+    const [, m2] = addDays(ws, 4).split('-').map(Number);
+    return m1 === m2 ? `${m1}월` : `${m1}월 – ${m2}월`;
+  }
+
+  let currentWeekStart = null;
 
   function viewWeek(params) {
     const t = todayKst();
@@ -84,25 +105,59 @@
     const def = isWeekend(t) && index.weeks[addDays(thisWeek, 7)] ? addDays(thisWeek, 7) : thisWeek;
     let ws = params.get('w') ? mondayOf(params.get('w')) : def;
     if (ws < thisWeek) ws = thisWeek; // 지난 주는 보여주지 않음
+    currentWeekStart = ws;
     const w = index.weeks[ws];
     const prev = ws > thisWeek ? addDays(ws, -7) : null;
     const next = index.weeks[addDays(ws, 7)] ? addDays(ws, 7) : null;
-    const nav = `
-      <div class="week-nav">
-        ${prev ? `<a class="btn btn-icon" href="#/week?w=${prev}" aria-label="이전 주">‹</a>` : '<span class="btn-icon"></span>'}
-        <div class="week-title"><strong>${weekRange(ws)}</strong><span class="muted small">${ws === thisWeek ? '이번 주' : '다음 주'}</span></div>
-        ${next ? `<a class="btn btn-icon" href="#/week?w=${next}" aria-label="다음 주">›</a>` : '<span class="btn-icon"></span>'}
-      </div>`;
-    if (!w) return nav + notice(false) + adminLink;
-    const days = DAY_NAMES.map((_, i) => {
+
+    const header = `
+      <header class="large-title with-nav">
+        <div>
+          <p class="eyebrow">${ws === thisWeek ? '이번 주' : '다음 주'}</p>
+          <h1 data-title="${ws === thisWeek ? '이번 주' : '다음 주'}">${weekTitle(ws)}</h1>
+        </div>
+        <nav class="week-arrows">
+          ${prev ? `<a href="#/week?w=${prev}" aria-label="이전 주">${CHEVRON_L}</a>` : `<span class="disabled">${CHEVRON_L}</span>`}
+          ${next ? `<a href="#/week?w=${next}" aria-label="다음 주">${CHEVRON_R}</a>` : `<span class="disabled">${CHEVRON_R}</span>`}
+        </nav>
+      </header>`;
+
+    const sel = ws <= t && t <= addDays(ws, 4) ? (dow(t) + 6) % 7 : 0; // 기본 선택: 오늘, 아니면 월요일
+    const strip = DAY_NAMES.map((name, i) => {
       const d = addDays(ws, i);
-      const closed = (w.closed || []).includes(i);
-      return `<section class="menu day ${d === t ? 'is-today' : ''}">
-        <h2>${fmt(d)} ${d === t ? '<span class="chip">오늘</span>' : ''}</h2>
-        ${closed ? '<p class="closed">휴무</p>' : crop(ws, i)}</section>`;
+      const closed = w && (w.closed || []).includes(i);
+      return `<button type="button" class="cal-day ${d === t ? 'is-today' : ''} ${i === sel ? 'is-selected' : ''}" data-i="${i}" aria-label="${longDate(d)}">
+          <span class="cal-wd">${name}</span>
+          <span class="cal-num">${Number(d.slice(8))}</span>
+          <span class="cal-thumb">${!w ? '' : closed ? '<span class="cal-closed">휴무</span>' : crop(ws, i, 'crop-thumb')}</span>
+        </button>`;
     }).join('');
-    return `${nav}<div class="week-grid">${days}</div>
-      <p class="center"><a class="link small" href="${esc(imageUrl(ws, w))}" target="_blank" rel="noopener">원본 식단표 보기</a></p>${adminLink}`;
+
+    return `${header}
+      <div class="card calendar"><div class="cal-strip">${strip}</div></div>
+      ${w ? `<section class="day-detail" id="day-detail"></section>
+        <p class="footnote"><a href="${esc(imageUrl(ws, w))}" target="_blank" rel="noopener">원본 식단표 보기</a></p>` : empty(false)}
+      ${adminLink}`;
+  }
+
+  function bindWeek() {
+    const detail = document.getElementById('day-detail');
+    if (!detail) return;
+    const weekStart = currentWeekStart;
+    const show = (i) => {
+      document.querySelectorAll('.cal-day').forEach((b) => b.classList.toggle('is-selected', Number(b.dataset.i) === i));
+      const d = addDays(weekStart, i);
+      const closed = (index.weeks[weekStart].closed || []).includes(i);
+      detail.innerHTML = `<h2 class="section-title">${longDate(d)}${d === todayKst() ? ' <span class="badge">오늘</span>' : ''}</h2>
+        ${closed ? `<div class="card empty empty-sm"><p class="empty-title">휴무</p></div>` : `<div class="card card-photo">${crop(weekStart, i)}</div>`}`;
+    };
+    document.querySelectorAll('.cal-day').forEach((b) => {
+      b.addEventListener('click', (e) => {
+        e.preventDefault(); // 칸 미리보기 링크 대신 선택
+        show(Number(b.dataset.i));
+      });
+    });
+    show(Number(document.querySelector('.cal-day.is-selected')?.dataset.i || 0));
   }
 
   // ── GitHub API (담당자 전용) ─────────────────────────────
@@ -170,51 +225,58 @@
   // ── 화면: 업로드 ───────────────────────────────────────
   function viewUpload() {
     if (!gh.repo()) {
-      return `<div class="upload"><h1>식단표 업로드</h1><p class="alert alert-error">저장소를 알 수 없습니다.
-        GitHub Pages 주소로 접속하거나 <code>config.js</code>의 <code>repo</code>를 채워 주세요.</p></div>`;
+      return `<header class="large-title"><h1 data-title="업로드">식단표 업로드</h1></header>
+        <p class="alert alert-error">저장소를 알 수 없습니다. GitHub Pages 주소로 접속하거나 <code>config.js</code>의 <code>repo</code>를 채워 주세요.</p>`;
     }
     if (!gh.token) {
-      return `<form class="pin" id="token-form">
-        <h1>담당자 확인</h1>
-        <p class="muted small">식단표를 저장하려면 <b>${esc(gh.repo())}</b> 저장소에 쓸 수 있는 GitHub 토큰이 필요해요. 이 브라우저에만 저장됩니다.</p>
-        <input class="pin-input token-input" type="password" id="token" autocomplete="off" placeholder="github_pat_…" required>
+      return `<header class="large-title"><h1 data-title="담당자 확인">담당자 확인</h1></header>
+      <form id="token-form">
+        <p class="group-header">GitHub 토큰</p>
+        <div class="card group"><input class="group-input" type="password" id="token" autocomplete="off" placeholder="github_pat_…" required></div>
+        <p class="group-footer"><b>${esc(gh.repo())}</b> 저장소에 쓸 수 있는 토큰이 필요해요. 이 브라우저에만 저장됩니다.
+          <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">토큰 만들기</a> · 저장소 하나만 선택, Contents: Read and write</p>
         <p class="error" id="token-err"></p>
-        <button class="btn btn-primary btn-block" id="token-btn">확인</button>
-        <p class="muted small"><a class="link" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">토큰 만들기</a>
-          · 저장소 하나만 선택, 권한은 Contents: Read and write</p>
+        <button class="btn btn-primary btn-block btn-lg" id="token-btn">확인</button>
       </form>`;
     }
     const t = todayKst();
     const defWeek = addDays(mondayOf(t), dow(t) >= 4 || dow(t) === 0 ? 7 : 0); // 목~일에 올리면 다음 주
     return `
       <div class="upload">
-        <h1>식단표 업로드</h1>
-        <div id="dropzone" class="dropzone">
-          <p class="dropzone-title">식단표 사진을 올려 주세요</p>
-          <p class="muted small">여기로 끌어다 놓거나, 복사한 이미지를 붙여넣기(Ctrl+V) 할 수 있어요</p>
+        <header class="large-title"><h1 data-title="업로드">식단표 업로드</h1></header>
+        <div id="dropzone" class="card dropzone">
+          <div class="empty-icon">${ICON_FORK}</div>
+          <p class="empty-title">식단표 사진 추가</p>
+          <p class="empty-sub">여기로 끌어다 놓거나 복사한 이미지를 붙여넣을 수 있어요</p>
           <div class="row center">
-            <button type="button" class="btn btn-primary" id="btn-camera">📷 촬영</button>
-            <button type="button" class="btn" id="btn-gallery">🖼 갤러리</button>
+            <button type="button" class="btn btn-primary" id="btn-camera">사진 찍기</button>
+            <button type="button" class="btn btn-tinted" id="btn-gallery">사진 선택</button>
           </div>
         </div>
         <div id="editor" hidden>
-          <p class="muted small">선을 끌어서 <b>요일 칸 경계</b>와 <b>위·아래</b>를 맞춰 주세요. 요일 이름을 누르면 휴무로 바뀝니다. 맞춘 위치는 다음 주에도 그대로 쓰입니다.</p>
-          <div class="stage"><img id="preview" alt="선택한 식단표"><div id="overlay" class="overlay"></div></div>
-          <div class="row wrap">
-            <span class="muted small ellipsis" id="file-info"></span>
-            <button type="button" class="btn btn-sm" id="btn-equal">균등 분할</button>
-            <button type="button" class="btn btn-sm" id="btn-replace">교체</button>
-            <button type="button" class="btn btn-sm btn-danger" id="btn-remove">삭제</button>
+          <p class="group-header">칸 맞추기</p>
+          <div class="card stage-card">
+            <div class="stage"><img id="preview" alt="선택한 식단표"><div id="overlay" class="overlay"></div></div>
           </div>
-          <label class="field"><span>어느 주 식단인가요?</span>
-            <input class="input" type="date" id="week" value="${defWeek}"><strong id="week-range"></strong></label>
+          <p class="group-footer">선을 끌어 요일 칸 경계와 위·아래를 맞추세요. 요일 이름을 누르면 휴무가 됩니다. 맞춘 위치는 다음 주에도 그대로 쓰입니다.</p>
+          <div class="card group">
+            <div class="group-row"><span class="ellipsis muted" id="file-info"></span></div>
+            <button type="button" class="group-row group-btn" id="btn-equal">균등 분할</button>
+            <button type="button" class="group-row group-btn" id="btn-replace">다른 사진으로 교체</button>
+            <button type="button" class="group-row group-btn danger" id="btn-remove">사진 삭제</button>
+          </div>
+          <p class="group-header">주</p>
+          <div class="card group">
+            <label class="group-row"><span>시작일 (월요일)</span><input class="group-date" type="date" id="week" value="${defWeek}"></label>
+            <div class="group-row"><span class="muted" id="week-range"></span></div>
+          </div>
         </div>
         <div id="error" class="alert alert-error" role="alert" hidden>
           <strong id="error-title"></strong><p id="error-msg"></p>
-          <button type="button" class="btn btn-sm" id="btn-retry">다시 시도</button>
+          <button type="button" class="btn btn-sm btn-tinted" id="btn-retry">다시 시도</button>
         </div>
         <button type="button" class="btn btn-primary btn-block btn-lg" id="btn-save" disabled>저장</button>
-        <p class="center"><button type="button" class="link small btn-plain" id="btn-logout">토큰 지우기</button></p>
+        <p class="footnote"><button type="button" class="btn-plain" id="btn-logout">토큰 지우기</button></p>
         <input type="file" id="in-gallery" accept="image/*" hidden>
         <input type="file" id="in-camera" accept="image/*" capture="environment" hidden>
       </div>`;
@@ -469,8 +531,18 @@
     $main.innerHTML = (flash ? `<p class="alert alert-ok">${esc(flash)}</p>` : '') + view(params);
     flash = null;
     window.scrollTo(0, 0);
+    $navTitle.textContent = $main.querySelector('[data-title]')?.dataset.title || '';
+    onScroll();
+    if (path === '/week') bindWeek();
     if (path === '/upload') document.getElementById('token-form') ? bindTokenForm() : gh.repo() && bindUpload();
   }
+
+  // iOS처럼 큰 제목이 스크롤로 사라지면 상단 바에 작은 제목 표시
+  const $navTitle = document.getElementById('nav-title');
+  function onScroll() {
+    document.body.classList.toggle('scrolled', window.scrollY > 44);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
 
   window.addEventListener('hashchange', render);
   // 앱을 켜 둔 채 다시 열면 최신 식단과 오늘 날짜로 갱신
