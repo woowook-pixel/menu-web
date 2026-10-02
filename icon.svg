@@ -1,45 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FFE9A3"/>
-      <stop offset="1" stop-color="#FFC94D"/>
-    </linearGradient>
-    <linearGradient id="bowl" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FF8A6B"/>
-      <stop offset="1" stop-color="#F25C3D"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <!-- 김 -->
-  <g fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" opacity="0.9">
-    <path d="M196 150c-14-16 14-30 0-48"/>
-    <path d="M256 138c-14-16 14-30 0-48"/>
-    <path d="M316 150c-14-16 14-30 0-48"/>
-  </g>
-  <!-- 밥 -->
-  <g fill="#FFFDF7">
-    <circle cx="160" cy="262" r="52"/>
-    <circle cx="214" cy="226" r="58"/>
-    <circle cx="282" cy="222" r="60"/>
-    <circle cx="348" cy="258" r="54"/>
-    <circle cx="250" cy="262" r="60"/>
-  </g>
-  <g fill="#F1E7D2">
-    <ellipse cx="226" cy="206" rx="9" ry="5" transform="rotate(-25 226 206)"/>
-    <ellipse cx="300" cy="214" rx="9" ry="5" transform="rotate(20 300 214)"/>
-    <ellipse cx="176" cy="244" rx="9" ry="5" transform="rotate(10 176 244)"/>
-  </g>
-  <!-- 그릇 -->
-  <path d="M86 280h340a170 160 0 0 1-340 0z" fill="url(#bowl)"/>
-  <rect x="72" y="262" width="368" height="34" rx="17" fill="#E9502F"/>
-  <!-- 얼굴 -->
-  <g fill="none" stroke="#5B2A1C" stroke-width="11" stroke-linecap="round">
-    <path d="M190 350q16-20 32 0"/>
-    <path d="M290 350q16-20 32 0"/>
-    <path d="M238 372q18 18 36 0"/>
-  </g>
-  <g fill="#FFB3B3" opacity="0.9">
-    <ellipse cx="170" cy="382" rx="24" ry="14"/>
-    <ellipse cx="342" cy="382" rx="24" ry="14"/>
+  <rect width="512" height="512" rx="112" fill="#FF3B30"/>
+  <g fill="#FFFFFF">
+    <!-- 숟가락 -->
+    <path d="M176 116c-34 0-56 40-56 82 0 32 16 54 40 62v148a16 16 0 0 0 32 0V260c24-8 40-30 40-62 0-42-22-82-56-82z"/>
+    <!-- 포크 -->
+    <path d="M296 116h14v84h14v-84h14v84h14v-84h14v96c0 22-14 38-32 44v152a16 16 0 0 1-32 0V256c-18-6-32-22-32-44v-96h14v84h12z"/>
   </g>
 </svg>

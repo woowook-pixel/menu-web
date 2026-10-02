@@ -1,5 +1,5 @@
 // 최소 서비스워커: 페이지·식단 목록은 네트워크 우선(오프라인이면 마지막 본 내용), 사진·정적 파일은 캐시 우선
-const CACHE = 'menu-v2';
+const CACHE = 'menu-v3';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (e) => {
