@@ -65,10 +65,11 @@
   const ICON_FORK = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v8.5a2.5 2.5 0 0 1-1 2V22H4.5v-9.5a2.5 2.5 0 0 1-1-2V2H5v7h.75V2h1.5v7H8V2zm9.5 0C18.4 2 20 4.2 20 7.5c0 2.6-1 4.4-2.5 5V22H16V2z" fill="currentColor"/></svg>`;
   const longDate = (iso) => { const [, m, d] = iso.split('-').map(Number); return `${m}월 ${d}일 ${WEEKDAYS[dow(iso)]}요일`; };
 
-  const empty = (weekend) => `
+  const topbar = (actions = '') => `<header class="pf-topbar"><span class="pf-wordmark">BITE</span><nav class="pf-actions">${actions}</nav></header>`;
+
+  const empty = () => `
     <div class="empty">
-      <div class="empty-icon">${ICON_FORK}</div>
-      <p class="empty-title">${weekend ? '오늘은 식당이 쉬는 날이에요' : '식단이 아직 없어요'}</p>
+      <h2 class="empty-title">메뉴가 없습니다.</h2>
       <p class="empty-sub">다음 주 식단은 일요일 저녁에 올라옵니다</p>
     </div>`;
 
@@ -76,12 +77,12 @@
   function viewHome() {
     const t = todayKst();
     const today = dayEntry(t);
-    return `
-      <header class="large-title">
-        <p class="eyebrow">${longDate(t)}</p>
-        <h1 data-title="오늘">오늘의 메뉴</h1>
-      </header>
-      ${today ? `<div class="card card-photo">${crop(today.ws, today.i)}</div>` : empty(isWeekend(t))}`;
+    return `${topbar('<a class="pf-action" href="#/week">이번 주 →</a>')}
+      <div class="pf-titleblock">
+        <p class="pf-eyebrow pf-now">${longDate(t)}</p>
+        <h1 class="pf-title">오늘의 메뉴</h1>
+      </div>
+      ${today ? `<div class="menu-photo">${crop(today.ws, today.i)}</div>` : empty()}`;
   }
 
   // ── 화면: 이번 주 (캘린더 주 보기) ─────────────────────────
@@ -523,7 +524,7 @@
     const [path, qs] = (location.hash.slice(1) || '/').split('?');
     const params = new URLSearchParams(qs);
     pageHandlers.paste = pageHandlers.drop = null;
-    document.querySelectorAll('.tab').forEach((a) => a.classList.toggle('active', a.dataset.tab === ({ '/': 'home', '/week': 'week' })[path]));
+    document.querySelectorAll('.pf-tabbar a').forEach((a) => (a.dataset.tab === ({ '/': 'home', '/week': 'week' })[path] ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
     if (!index) await loadIndex();
 
     const views = { '/': viewHome, '/week': viewWeek, '/upload': viewUpload };
@@ -531,18 +532,9 @@
     $main.innerHTML = (flash ? `<p class="alert alert-ok">${esc(flash)}</p>` : '') + view(params);
     flash = null;
     window.scrollTo(0, 0);
-    $navTitle.textContent = $main.querySelector('[data-title]')?.dataset.title || '';
-    onScroll();
     if (path === '/week') bindWeek();
     if (path === '/upload') document.getElementById('token-form') ? bindTokenForm() : gh.repo() && bindUpload();
   }
-
-  // iOS처럼 큰 제목이 스크롤로 사라지면 상단 바에 작은 제목 표시
-  const $navTitle = document.getElementById('nav-title');
-  function onScroll() {
-    document.body.classList.toggle('scrolled', window.scrollY > 44);
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
 
   window.addEventListener('hashchange', render);
   // 앱을 켜 둔 채 다시 열면 최신 식단과 오늘 날짜로 갱신

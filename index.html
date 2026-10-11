@@ -19,17 +19,10 @@
   <title>Bite</title>
 </head>
 <body>
-  <header class="navbar"><span id="nav-title"></span></header>
-  <main class="content" id="main"><div class="skeleton"></div></main>
-  <nav class="tabbar">
-    <a href="#/" class="tab" data-tab="home">
-      <svg viewBox="0 0 28 28" aria-hidden="true"><path d="M9 3v9.2a3 3 0 0 1-1.2 2.4V25H6.2V14.6A3 3 0 0 1 5 12.2V3h1.6v8h.9V3h1.6v8h.9V3H9zm10.5 0c2.2 0 3.5 2.6 3.5 6.2 0 2.9-1.1 5-2.7 5.6V25h-1.6V3h.8z" fill="currentColor"/></svg>
-      <span>오늘</span>
-    </a>
-    <a href="#/week" class="tab" data-tab="week">
-      <svg viewBox="0 0 28 28" aria-hidden="true"><rect x="3.5" y="5" width="21" height="19" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10.5h21M9 3v4M19 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="15" r="1.4" fill="currentColor"/><circle cx="14" cy="15" r="1.4" fill="currentColor"/><circle cx="19" cy="15" r="1.4" fill="currentColor"/><circle cx="9" cy="19.5" r="1.4" fill="currentColor"/><circle cx="14" cy="19.5" r="1.4" fill="currentColor"/></svg>
-      <span>이번 주</span>
-    </a>
+  <main class="pf-screen" id="main"><div class="skeleton"></div></main>
+  <nav class="pf-tabbar" aria-label="화면 전환">
+    <a href="#/" data-tab="home">오늘</a>
+    <a href="#/week" data-tab="week">이번 주</a>
   </nav>
 
   <dialog id="confirm" class="dialog">
