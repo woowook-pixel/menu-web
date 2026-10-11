@@ -10,7 +10,7 @@ code { font: 500 0.9em var(--pf-mono); }
 /* ── 화면 틀 ───────────────────────────────── */
 .pf-screen { max-width: 720px; margin: 0 auto; padding-top: max(var(--pf-top), calc(env(safe-area-inset-top) + 10px)); }
 .pf-actions { display: flex; gap: 4px; }
-a.pf-action { display: inline-flex; align-items: center; justify-content: center; }
+.pf-action { display: inline-flex; align-items: center; justify-content: center; }
 .pf-action.is-disabled { color: var(--pf-mute); cursor: default; }
 .pf-action.link { text-decoration: underline; text-underline-offset: 4px; }
 .pf-now::before { vertical-align: 1px; }
@@ -30,3 +30,9 @@ a.pf-action { display: inline-flex; align-items: center; justify-content: center
 .pf-tabbar { padding-left: max(var(--pf-side), calc((100% - 720px) / 2)); padding-right: max(var(--pf-side), calc((100% - 720px) / 2)); }
 .pf-tabbar a { flex: 1; height: var(--pf-touch); display: flex; align-items: center; justify-content: center; font: 500 12px/1 var(--pf-font); letter-spacing: 0.06em; color: var(--pf-mute); }
 .pf-tabbar a[aria-current="page"] { font-weight: 800; color: var(--pf-black); }
+
+/* ── 이번 주: 요일 밑줄 탭 ──────────────────── */
+.week-tabs { gap: 0; }
+.week-tabs .pf-tab { flex: 1; padding: 0 4px; cursor: pointer; }
+.footnote { margin: 20px 0 0; font: var(--pf-sub); color: var(--pf-gray); }
+.footnote a, .footnote button { display: inline-flex; align-items: center; min-height: var(--pf-touch); padding: 0; border: 0; background: none; font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 3px; }

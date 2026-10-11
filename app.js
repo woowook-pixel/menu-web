@@ -40,8 +40,7 @@
   const imageUrl = (ws, w) => localImages[ws] || `${w.image}?v=${w.v}`;
 
   // 원본 사진의 i번째 칸만 보이도록 CSS 배경으로 잘라 표시
-  // 미리보기(crop-thumb)는 버튼 안에 들어가므로 링크가 아닌 span으로 만든다
-  function crop(ws, i, cls = '') {
+  function crop(ws, i) {
     const w = index.weeks[ws];
     const { cols, top, bottom } = w.layout;
     const cw = cols[i + 1] - cols[i], ch = bottom - top;
@@ -49,8 +48,7 @@
     const py = ch >= 1 ? 0 : (top / (1 - ch)) * 100;
     const url = imageUrl(ws, w);
     const style = `aspect-ratio:${(cw * w.width) / (ch * w.height)};background-image:url('${esc(url)}');background-size:${100 / cw}% ${100 / ch}%;background-position:${px}% ${py}%`;
-    if (cls.includes('crop-thumb')) return `<span class="crop ${cls}" style="${style}"></span>`;
-    return `<a class="crop ${cls}" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${fmt(addDays(ws, i))} 식단 원본 보기" style="${style}"></a>`;
+    return `<a class="crop" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${fmt(addDays(ws, i))} 식단 원본 보기" style="${style}"></a>`;
   }
 
   function dayEntry(iso) {
@@ -85,11 +83,8 @@
       ${today ? `<div class="menu-photo">${crop(today.ws, today.i)}</div>` : empty()}`;
   }
 
-  // ── 화면: 이번 주 (캘린더 주 보기) ─────────────────────────
-  // 위: 요일·날짜 줄 + 5일 칸 미리보기 (전체 한눈에), 아래: 고른 날 크게
+  // ── 화면: 이번 주 (밑줄 탭으로 요일 선택) ──────────────────
   const adminLink = '<p class="footnote"><a href="#/upload">담당자: 식단표 업로드</a></p>';
-  const CHEVRON_L = '<svg viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const CHEVRON_R = '<svg viewBox="0 0 12 20" aria-hidden="true"><path d="m2 2 8 8-8 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function weekTitle(ws) {
     const [, m1] = ws.split('-').map(Number);
@@ -111,33 +106,25 @@
     const prev = ws > thisWeek ? addDays(ws, -7) : null;
     const next = index.weeks[addDays(ws, 7)] ? addDays(ws, 7) : null;
 
-    const header = `
-      <header class="large-title with-nav">
-        <div>
-          <p class="eyebrow">${ws === thisWeek ? '이번 주' : '다음 주'}</p>
-          <h1 data-title="${ws === thisWeek ? '이번 주' : '다음 주'}">${weekTitle(ws)}</h1>
-        </div>
-        <nav class="week-arrows">
-          ${prev ? `<a href="#/week?w=${prev}" aria-label="이전 주">${CHEVRON_L}</a>` : `<span class="disabled">${CHEVRON_L}</span>`}
-          ${next ? `<a href="#/week?w=${next}" aria-label="다음 주">${CHEVRON_R}</a>` : `<span class="disabled">${CHEVRON_R}</span>`}
-        </nav>
-      </header>`;
+    const arrows = [
+      prev ? `<a class="pf-action" href="#/week?w=${prev}" aria-label="이전 주">←</a>` : '<span class="pf-action is-disabled" aria-hidden="true">←</span>',
+      next ? `<a class="pf-action" href="#/week?w=${next}" aria-label="다음 주">→</a>` : '<span class="pf-action is-disabled" aria-hidden="true">→</span>',
+    ].join('');
 
     const sel = ws <= t && t <= addDays(ws, 4) ? (dow(t) + 6) % 7 : 0; // 기본 선택: 오늘, 아니면 월요일
-    const strip = DAY_NAMES.map((name, i) => {
+    const tabs = DAY_NAMES.map((name, i) => {
       const d = addDays(ws, i);
-      const closed = w && (w.closed || []).includes(i);
-      return `<button type="button" class="cal-day ${d === t ? 'is-today' : ''} ${i === sel ? 'is-selected' : ''}" data-i="${i}" aria-label="${longDate(d)}">
-          <span class="cal-wd">${name}</span>
-          <span class="cal-num">${Number(d.slice(8))}</span>
-          <span class="cal-thumb">${!w ? '' : closed ? '<span class="cal-closed">휴무</span>' : crop(ws, i, 'crop-thumb')}</span>
-        </button>`;
+      return `<button type="button" role="tab" class="pf-tab ${d === t ? 'pf-now' : ''}" data-i="${i}" aria-selected="${i === sel}" aria-label="${longDate(d)}">${name} ${Number(d.slice(8))}</button>`;
     }).join('');
 
-    return `${header}
-      <div class="card calendar"><div class="cal-strip">${strip}</div></div>
-      ${w ? `<section class="day-detail" id="day-detail"></section>
-        <p class="footnote"><a href="${esc(imageUrl(ws, w))}" target="_blank" rel="noopener">원본 식단표 보기</a></p>` : empty(false)}
+    return `${topbar(arrows)}
+      <div class="pf-titleblock">
+        <p class="pf-eyebrow">${ws === thisWeek ? '이번 주' : '다음 주'}</p>
+        <h1 class="pf-title">${weekTitle(ws)}</h1>
+      </div>
+      <div class="pf-tabs week-tabs" role="tablist" aria-label="요일">${tabs}</div>
+      ${w ? `<section id="day-detail"></section>
+        <p class="footnote"><a href="${esc(imageUrl(ws, w))}" target="_blank" rel="noopener">원본 식단표 보기</a></p>` : empty()}
       ${adminLink}`;
   }
 
@@ -146,19 +133,16 @@
     if (!detail) return;
     const weekStart = currentWeekStart;
     const show = (i) => {
-      document.querySelectorAll('.cal-day').forEach((b) => b.classList.toggle('is-selected', Number(b.dataset.i) === i));
+      document.querySelectorAll('.pf-tab').forEach((b) => b.setAttribute('aria-selected', String(Number(b.dataset.i) === i)));
       const d = addDays(weekStart, i);
       const closed = (index.weeks[weekStart].closed || []).includes(i);
-      detail.innerHTML = `<h2 class="section-title">${longDate(d)}${d === todayKst() ? ' <span class="badge">오늘</span>' : ''}</h2>
-        ${closed ? `<div class="card empty empty-sm"><p class="empty-title">휴무</p></div>` : `<div class="card card-photo">${crop(weekStart, i)}</div>`}`;
+      detail.innerHTML = `<div class="pf-label"><span>${longDate(d)}</span>${d === todayKst() ? '<span class="pf-now">오늘</span>' : ''}</div>
+        ${closed ? `<div class="empty"><h2 class="empty-title">메뉴가 없습니다.</h2><p class="empty-sub">휴무</p></div>` : `<div class="menu-photo">${crop(weekStart, i)}</div>`}`;
     };
-    document.querySelectorAll('.cal-day').forEach((b) => {
-      b.addEventListener('click', (e) => {
-        e.preventDefault(); // 칸 미리보기 링크 대신 선택
-        show(Number(b.dataset.i));
-      });
+    document.querySelectorAll('.pf-tab').forEach((b) => {
+      b.addEventListener('click', () => show(Number(b.dataset.i)));
     });
-    show(Number(document.querySelector('.cal-day.is-selected')?.dataset.i || 0));
+    show(Number(document.querySelector('.pf-tab[aria-selected="true"]')?.dataset.i || 0));
   }
 
   // ── GitHub API (담당자 전용) ─────────────────────────────
