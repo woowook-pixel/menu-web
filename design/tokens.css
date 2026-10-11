@@ -1,0 +1,77 @@
+/* Personal App Family: 공통 디자인 토큰 v1
+   폰트 로드 (index.html <head>):
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;600;700&display=swap">
+*/
+:root {
+  /* Color */
+  --pf-black: #111111;      /* 글자, 주 버튼, 섹션 시작선, 아이콘 바탕 */
+  --pf-white: #FFFFFF;      /* 화면 바탕 */
+  --pf-gray: #6E6E6E;       /* 보조 텍스트 */
+  --pf-mute: #9A9A9A;       /* 비활성 탭 */
+  --pf-line: #E6E6E6;       /* 목록 구분선 */
+  --pf-ember: #FF7A3D;      /* 지금, 오늘, 현재 상태 표시 전용 */
+  --pf-info-red: #D7262E;   /* 정보 색 예외 (버스 노선 등) */
+  --pf-dim: rgba(17, 17, 17, 0.35); /* 시트 뒤 배경 */
+
+  /* Type */
+  --pf-font: 'Archivo', 'Noto Sans KR', system-ui, sans-serif;
+  --pf-mono: 'IBM Plex Mono', ui-monospace, monospace; /* 타브 악보처럼 글자 정렬이 필요한 곳만 */
+  --pf-wordmark: 900 15px/1 var(--pf-font);   /* 대문자, letter-spacing 0.14em */
+  --pf-title: 900 44px/1.02 var(--pf-font);   /* letter-spacing -0.035em */
+  --pf-heading: 900 30px/1.1 var(--pf-font);  /* 시트 제목, 빈 상태 제목 */
+  --pf-body: 500 16px/1.4 var(--pf-font);
+  --pf-sub: 400 12px/1.4 var(--pf-font);
+  --pf-label: 800 11px/1 var(--pf-font);      /* letter-spacing 0.12em */
+  --pf-action: 700 12px/1 var(--pf-font);     /* 텍스트 버튼, letter-spacing 0.08em */
+
+  /* Layout */
+  --pf-side: 20px;          /* 화면 좌우 여백 */
+  --pf-top: 54px;           /* 상단 안전영역 아래 시작 */
+  --pf-touch: 44px;         /* 최소 터치 영역 */
+  --pf-row: 52px;           /* 목록 행 최소 높이 */
+  --pf-radius: 0;           /* 모서리 없음 */
+  --pf-tabbar: 80px;
+}
+
+body { margin: 0; background: var(--pf-white); color: var(--pf-black); font: var(--pf-body); }
+
+.pf-screen { padding: var(--pf-top) var(--pf-side) calc(var(--pf-tabbar) + 24px); }
+
+/* 상단 바: 대문자 앱 이름 + 텍스트 버튼 */
+.pf-topbar { height: var(--pf-touch); display: flex; align-items: center; justify-content: space-between; }
+.pf-wordmark { font: var(--pf-wordmark); letter-spacing: 0.14em; text-transform: uppercase; }
+.pf-action { min-width: var(--pf-touch); height: var(--pf-touch); padding: 0 2px; border: 0; background: none; font: var(--pf-action); letter-spacing: 0.08em; color: var(--pf-black); }
+
+/* 제목 블록 */
+.pf-titleblock { padding: 36px 0 28px; display: flex; flex-direction: column; gap: 10px; }
+.pf-eyebrow { font: 700 12px/1 var(--pf-font); letter-spacing: 0.08em; color: var(--pf-gray); display: flex; align-items: center; gap: 8px; }
+.pf-title { font: var(--pf-title); letter-spacing: -0.035em; margin: 0; }
+
+/* 현재 표시: Ember 사각 점 */
+.pf-now::before { content: ""; width: 7px; height: 7px; background: var(--pf-ember); display: inline-block; margin-right: 6px; }
+
+/* 밑줄 탭 (세그먼트) */
+.pf-tabs { display: flex; gap: 22px; box-shadow: inset 0 -1px 0 var(--pf-line); overflow-x: auto; }
+.pf-tab { height: var(--pf-touch); padding: 0; border: 0; background: none; font: 500 14px/1 var(--pf-font); color: var(--pf-mute); white-space: nowrap; }
+.pf-tab[aria-selected="true"] { font-weight: 800; color: var(--pf-black); box-shadow: inset 0 -2px 0 var(--pf-black); }
+
+/* 섹션 라벨 + 목록 */
+.pf-label { display: flex; justify-content: space-between; align-items: center; padding: 26px 0 8px; font: var(--pf-label); letter-spacing: 0.12em; }
+.pf-list { box-shadow: inset 0 1px 0 var(--pf-black); }
+.pf-row { display: flex; align-items: center; gap: 14px; min-height: var(--pf-row); padding: 8px 0; box-shadow: inset 0 -1px 0 var(--pf-line); }
+.pf-row-sub { font: var(--pf-sub); color: var(--pf-gray); }
+
+/* 버튼, 입력 */
+.pf-btn-primary { width: 100%; height: 56px; border: 0; border-radius: 0; background: var(--pf-black); color: var(--pf-white); font: 800 13px/1 var(--pf-font); letter-spacing: 0.12em; }
+.pf-input { height: 52px; display: flex; align-items: center; gap: 12px; box-shadow: inset 0 -1px 0 var(--pf-black); }
+.pf-input input { flex: 1; min-width: 0; border: 0; padding: 0; background: none; font: 500 17px/1 var(--pf-font); color: var(--pf-black); outline: none; }
+
+/* 하단 탭바: 글자만 */
+.pf-tabbar { position: fixed; left: 0; right: 0; bottom: 0; height: var(--pf-tabbar); padding: 6px var(--pf-side) env(safe-area-inset-bottom, 30px); box-sizing: border-box; background: var(--pf-white); box-shadow: inset 0 1px 0 var(--pf-black); display: flex; }
+.pf-tabbar button { flex: 1; height: var(--pf-touch); border: 0; background: none; font: 500 12px/1 var(--pf-font); letter-spacing: 0.06em; color: var(--pf-mute); }
+.pf-tabbar button[aria-current="page"] { font-weight: 800; color: var(--pf-black); }
+
+/* 시트 */
+.pf-sheet { background: var(--pf-white); box-shadow: inset 0 2px 0 var(--pf-black); padding: 26px var(--pf-side) 34px; }
+
+:focus-visible { outline: 2px solid var(--pf-black); outline-offset: 2px; }
