@@ -36,3 +36,47 @@ code { font: 500 0.9em var(--pf-mono); }
 .week-tabs .pf-tab { flex: 1; padding: 0 4px; cursor: pointer; }
 .footnote { margin: 20px 0 0; font: var(--pf-sub); color: var(--pf-gray); }
 .footnote a, .footnote button { display: inline-flex; align-items: center; min-height: var(--pf-touch); padding: 0; border: 0; background: none; font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── 업로드(담당자) ─────────────────────────── */
+.note { margin: 10px 0 0; font: var(--pf-sub); color: var(--pf-gray); line-height: 1.5; }
+.note a { text-decoration: underline; text-underline-offset: 3px; }
+.error { margin: 10px 0 0; font: 700 13px/1.4 var(--pf-font); }
+.muted { color: var(--pf-gray); }
+.ellipsis { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+.btn-gap { margin-top: 24px; cursor: pointer; }
+.pf-btn-primary:disabled { background: var(--pf-mute); cursor: default; }
+.alert { box-shadow: inset 0 2px 0 var(--pf-black); padding: 16px 0; margin: 0 0 16px; font: var(--pf-body); }
+.alert strong { font-weight: 800; }
+.alert p { margin: 4px 0 8px; font: var(--pf-sub); color: var(--pf-gray); }
+
+.group-row { justify-content: space-between; width: 100%; margin: 0; border: 0; background: none; font: var(--pf-body); color: var(--pf-black); text-align: left; }
+.group-btn { font-weight: 700; }
+.group-date { min-height: var(--pf-touch); padding: 0; border: 0; border-radius: 0; background: none; box-shadow: inset 0 -1px 0 var(--pf-black); font: inherit; color: var(--pf-black); }
+
+.dropzone { border-top: 1px solid var(--pf-black); padding: 24px 0; }
+.dropzone.is-drag { box-shadow: inset 0 2px 0 var(--pf-black); }
+.stage { position: relative; user-select: none; touch-action: none; background: var(--pf-white); }
+.stage img { display: block; width: 100%; }
+.overlay { position: absolute; inset: 0; }
+.shade { position: absolute; left: 0; right: 0; background: rgb(17 17 17 / 0.45); }
+.cell { position: absolute; border: 0; padding: 0; background: transparent; cursor: pointer; display: flex; align-items: flex-start; justify-content: center; }
+.cell span { margin-top: 6px; padding: 2px 8px; background: var(--pf-black); color: var(--pf-white); font: 700 12px/1.5 var(--pf-font); }
+.cell.is-closed { background: rgb(17 17 17 / 0.45); }
+.cell.is-closed span { background: var(--pf-gray); }
+.handle { position: absolute; z-index: 2; }
+.handle::after { content: ''; position: absolute; background: var(--pf-black); outline: 1px solid var(--pf-white); }
+.handle-v { top: 0; bottom: 0; width: 28px; margin-left: -14px; cursor: ew-resize; }
+.handle-v::after { left: 13px; top: 0; bottom: 0; width: 3px; }
+.handle-h { left: 0; right: 0; height: 28px; margin-top: -14px; cursor: ns-resize; }
+.handle-h::after { top: 13px; left: 0; right: 0; height: 3px; }
+.handle.is-active::after { background: var(--pf-gray); }
+
+/* ── 덮어쓰기 확인창 (시트) ──────────────────── */
+.dialog { width: min(360px, calc(100% - 40px)); border: 0; color: var(--pf-black); }
+.dialog::backdrop { background: var(--pf-dim); }
+.dialog h2 { margin: 0 0 12px; font: var(--pf-heading); letter-spacing: -0.02em; }
+.dialog p { margin: 0 0 20px; font: var(--pf-body); }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.dialog-actions button { min-height: var(--pf-touch); padding: 0 12px; border: 0; background: none; font: var(--pf-action); letter-spacing: 0.08em; }
+.dialog-actions .danger { font-weight: 900; text-decoration: underline; text-underline-offset: 4px; }

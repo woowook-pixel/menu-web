@@ -60,7 +60,6 @@
     return { ws, i };
   }
 
-  const ICON_FORK = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v8.5a2.5 2.5 0 0 1-1 2V22H4.5v-9.5a2.5 2.5 0 0 1-1-2V2H5v7h.75V2h1.5v7H8V2zm9.5 0C18.4 2 20 4.2 20 7.5c0 2.6-1 4.4-2.5 5V22H16V2z" fill="currentColor"/></svg>`;
   const longDate = (iso) => { const [, m, d] = iso.split('-').map(Number); return `${m}월 ${d}일 ${WEEKDAYS[dow(iso)]}요일`; };
 
   const topbar = (actions = '') => `<header class="pf-topbar"><span class="pf-wordmark">BITE</span><nav class="pf-actions">${actions}</nav></header>`;
@@ -208,60 +207,63 @@
   const b64ToUtf8 = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, '')), (c) => c.charCodeAt(0)));
 
   // ── 화면: 업로드 ───────────────────────────────────────
+  const closeAction = '<a class="pf-action" href="#/">닫기</a>';
+
   function viewUpload() {
     if (!gh.repo()) {
-      return `<header class="large-title"><h1 data-title="업로드">식단표 업로드</h1></header>
+      return `${topbar(closeAction)}
+        <div class="pf-titleblock"><h1 class="pf-title">식단표 업로드</h1></div>
         <p class="alert alert-error">저장소를 알 수 없습니다. GitHub Pages 주소로 접속하거나 <code>config.js</code>의 <code>repo</code>를 채워 주세요.</p>`;
     }
     if (!gh.token) {
-      return `<header class="large-title"><h1 data-title="담당자 확인">담당자 확인</h1></header>
+      return `${topbar(closeAction)}
+      <div class="pf-titleblock"><h1 class="pf-title">담당자 확인</h1></div>
       <form id="token-form">
-        <p class="group-header">GitHub 토큰</p>
-        <div class="card group"><input class="group-input" type="password" id="token" autocomplete="off" placeholder="github_pat_…" required></div>
-        <p class="group-footer"><b>${esc(gh.repo())}</b> 저장소에 쓸 수 있는 토큰이 필요해요. 이 브라우저에만 저장됩니다.
+        <div class="pf-label">GitHub 토큰</div>
+        <div class="pf-input"><input type="password" id="token" autocomplete="off" placeholder="github_pat_…" aria-label="GitHub 토큰" required></div>
+        <p class="note"><b>${esc(gh.repo())}</b> 저장소에 쓸 수 있는 토큰이 필요해요. 이 브라우저에만 저장됩니다.
           <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">토큰 만들기</a> · 저장소 하나만 선택, Contents: Read and write</p>
         <p class="error" id="token-err"></p>
-        <button class="btn btn-primary btn-block btn-lg" id="token-btn">확인</button>
+        <button class="pf-btn-primary btn-gap" id="token-btn">확인</button>
       </form>`;
     }
     const t = todayKst();
     const defWeek = addDays(mondayOf(t), dow(t) >= 4 || dow(t) === 0 ? 7 : 0); // 목~일에 올리면 다음 주
-    return `
+    return `${topbar(closeAction)}
       <div class="upload">
-        <header class="large-title"><h1 data-title="업로드">식단표 업로드</h1></header>
-        <div id="dropzone" class="card dropzone">
-          <div class="empty-icon">${ICON_FORK}</div>
-          <p class="empty-title">식단표 사진 추가</p>
+        <div class="pf-titleblock"><h1 class="pf-title">식단표 업로드</h1></div>
+        <div id="dropzone" class="dropzone">
+          <h2 class="empty-title">식단표 사진 추가</h2>
           <p class="empty-sub">여기로 끌어다 놓거나 복사한 이미지를 붙여넣을 수 있어요</p>
-          <div class="row center">
-            <button type="button" class="btn btn-primary" id="btn-camera">사진 찍기</button>
-            <button type="button" class="btn btn-tinted" id="btn-gallery">사진 선택</button>
+          <div class="row">
+            <button type="button" class="pf-action link" id="btn-camera">사진 찍기</button>
+            <button type="button" class="pf-action link" id="btn-gallery">사진 선택</button>
           </div>
         </div>
         <div id="editor" hidden>
-          <p class="group-header">칸 맞추기</p>
-          <div class="card stage-card">
+          <div class="pf-label">칸 맞추기</div>
+          <div class="stage-card">
             <div class="stage"><img id="preview" alt="선택한 식단표"><div id="overlay" class="overlay"></div></div>
           </div>
-          <p class="group-footer">선을 끌어 요일 칸 경계와 위·아래를 맞추세요. 요일 이름을 누르면 휴무가 됩니다. 맞춘 위치는 다음 주에도 그대로 쓰입니다.</p>
-          <div class="card group">
-            <div class="group-row"><span class="ellipsis muted" id="file-info"></span></div>
-            <button type="button" class="group-row group-btn" id="btn-equal">균등 분할</button>
-            <button type="button" class="group-row group-btn" id="btn-replace">다른 사진으로 교체</button>
-            <button type="button" class="group-row group-btn danger" id="btn-remove">사진 삭제</button>
+          <p class="note">선을 끌어 요일 칸 경계와 위·아래를 맞추세요. 요일 이름을 누르면 휴무가 됩니다. 맞춘 위치는 다음 주에도 그대로 쓰입니다.</p>
+          <div class="pf-list">
+            <div class="pf-row group-row"><span class="ellipsis muted" id="file-info"></span></div>
+            <button type="button" class="pf-row group-row group-btn" id="btn-equal">균등 분할</button>
+            <button type="button" class="pf-row group-row group-btn" id="btn-replace">다른 사진으로 교체</button>
+            <button type="button" class="pf-row group-row group-btn" id="btn-remove">사진 삭제</button>
           </div>
-          <p class="group-header">주</p>
-          <div class="card group">
-            <label class="group-row"><span>시작일 (월요일)</span><input class="group-date" type="date" id="week" value="${defWeek}"></label>
-            <div class="group-row"><span class="muted" id="week-range"></span></div>
+          <div class="pf-label">주</div>
+          <div class="pf-list">
+            <label class="pf-row group-row"><span>시작일 (월요일)</span><input class="group-date" type="date" id="week" value="${defWeek}"></label>
+            <div class="pf-row group-row"><span class="muted" id="week-range"></span></div>
           </div>
         </div>
         <div id="error" class="alert alert-error" role="alert" hidden>
           <strong id="error-title"></strong><p id="error-msg"></p>
-          <button type="button" class="btn btn-sm btn-tinted" id="btn-retry">다시 시도</button>
+          <button type="button" class="pf-action link" id="btn-retry">다시 시도</button>
         </div>
-        <button type="button" class="btn btn-primary btn-block btn-lg" id="btn-save" disabled>저장</button>
-        <p class="footnote"><button type="button" class="btn-plain" id="btn-logout">토큰 지우기</button></p>
+        <button type="button" class="pf-btn-primary btn-gap" id="btn-save" disabled>저장</button>
+        <p class="footnote"><button type="button" id="btn-logout">토큰 지우기</button></p>
         <input type="file" id="in-gallery" accept="image/*" hidden>
         <input type="file" id="in-camera" accept="image/*" capture="environment" hidden>
       </div>`;
@@ -448,7 +450,7 @@
       hideError();
       const btn = $('btn-save');
       btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> 저장 중…';
+      btn.textContent = '저장 중…';
       const ws = weekInput.value;
       try {
         if (!gh.branch) await gh.check();
