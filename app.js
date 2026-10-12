@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const APP_VERSION = '1bd2fcad3e78'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
+  const APP_VERSION = 'd2ec165b67f7'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
   const WEEKDAYS = '일월화수목금토';
   const DAY_NAMES = ['월', '화', '수', '목', '금'];
   const DEFAULT_LAYOUT = { cols: [0, 0.2, 0.4, 0.6, 0.8, 1], top: 0, bottom: 1 };
@@ -48,7 +48,8 @@
     const px = cw >= 1 ? 0 : (cols[i] / (1 - cw)) * 100;
     const py = ch >= 1 ? 0 : (top / (1 - ch)) * 100;
     const url = imageUrl(ws, w);
-    const style = `aspect-ratio:${(cw * w.width) / (ch * w.height)};background-image:url('${esc(url)}');background-size:${100 / cw}% ${100 / ch}%;background-position:${px}% ${py}%`;
+    const ar = (cw * w.width) / (ch * w.height);
+    const style = `--ar:${ar};aspect-ratio:${ar};background-image:url('${esc(url)}');background-size:${100 / cw}% ${100 / ch}%;background-position:${px}% ${py}%`;
     return `<a class="crop" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${fmt(addDays(ws, i))} 식단 원본 보기" style="${style}"></a>`;
   }
 
@@ -71,78 +72,81 @@
       <p class="empty-sub">다음 주 식단은 일요일 저녁에 올라옵니다</p>
     </div>`;
 
-  // ── 화면: 오늘 (오늘 메뉴만) ─────────────────────────────
-  function viewHome() {
-    const t = todayKst();
-    const today = dayEntry(t);
-    return `${topbar('<a class="pf-action" href="#/week">이번 주<pf-sym name="arrow-right"></pf-sym></a>')}
-      <div class="pf-titleblock">
-        <p class="pf-eyebrow pf-now">${longDate(t)}</p>
-        <h1 class="pf-title">오늘의 메뉴</h1>
-      </div>
-      ${today ? `<div class="menu-photo">${crop(today.ws, today.i)}</div>` : empty()}`;
-  }
-
-  // ── 화면: 이번 주 (밑줄 탭으로 요일 선택) ──────────────────
+  // ── 화면: 오늘 고정 + 좌우 스와이프로 다른 날 보기 ─────────────
+  const NEXT_WEEK_NOTE = '다음 주 식단은 일요일 저녁에 올라옵니다';
   const adminLink = '<p class="footnote"><a href="#/upload">담당자: 식단표 업로드</a></p>';
 
-  function weekTitle(ws) {
-    const [, m1] = ws.split('-').map(Number);
-    const [, m2] = addDays(ws, 4).split('-').map(Number);
-    return m1 === m2 ? `${m1}월` : `${m1}월 – ${m2}월`;
+  // 올라와 있는 주의 평일들 + 오늘(주말이어도 포함)
+  function pagerDays(t) {
+    const days = new Set([t]);
+    const thisWeek = mondayOf(t);
+    for (const ws of Object.keys(index.weeks)) {
+      if (ws < thisWeek) continue;
+      for (let i = 0; i < 5; i++) days.add(addDays(ws, i));
+    }
+    return [...days].sort();
   }
 
-  let currentWeekStart = null;
+  const dayLabel = (iso, t) => {
+    const diff = Math.round((toUTC(iso) - toUTC(t)) / 86400000);
+    return diff === 0 ? '오늘' : diff === -1 ? '어제' : diff === 1 ? '내일' : iso < addDays(mondayOf(t), 7) ? '이번 주' : '다음 주';
+  };
 
-  function viewWeek(params) {
+  let pagerState = null; // 이번 렌더의 { days, t }
+
+  function slide(iso) {
+    const entry = dayEntry(iso);
+    if (entry) return `<section class="slide" data-date="${iso}">${crop(entry.ws, entry.i)}</section>`;
+    const w = index.weeks[mondayOf(iso)];
+    const closed = !isWeekend(iso) && w;
+    return `<section class="slide slide-empty" data-date="${iso}">
+      <div class="empty"><h2 class="empty-title">메뉴가 없습니다.</h2><p class="empty-sub">${closed ? '휴무' : NEXT_WEEK_NOTE}</p></div>
+    </section>`;
+  }
+
+  function viewHome() {
     const t = todayKst();
-    const thisWeek = mondayOf(t);
-    // 주말에는 다음 주 식단이 올라와 있으면 다음 주를 먼저 보여줌
-    const def = isWeekend(t) && index.weeks[addDays(thisWeek, 7)] ? addDays(thisWeek, 7) : thisWeek;
-    let ws = params.get('w') ? mondayOf(params.get('w')) : def;
-    if (ws < thisWeek) ws = thisWeek; // 지난 주는 보여주지 않음
-    currentWeekStart = ws;
-    const w = index.weeks[ws];
-    const prev = ws > thisWeek ? addDays(ws, -7) : null;
-    const next = index.weeks[addDays(ws, 7)] ? addDays(ws, 7) : null;
-
-    const arrows = [
-      prev ? `<a class="pf-action" href="#/week?w=${prev}" aria-label="이전 주"><pf-sym name="arrow-left"></pf-sym></a>` : '<span class="pf-action is-disabled" aria-hidden="true"><pf-sym name="arrow-left"></pf-sym></span>',
-      next ? `<a class="pf-action" href="#/week?w=${next}" aria-label="다음 주"><pf-sym name="arrow-right"></pf-sym></a>` : '<span class="pf-action is-disabled" aria-hidden="true"><pf-sym name="arrow-right"></pf-sym></span>',
-    ].join('');
-
-    const sel = ws <= t && t <= addDays(ws, 4) ? (dow(t) + 6) % 7 : 0; // 기본 선택: 오늘, 아니면 월요일
-    const tabs = DAY_NAMES.map((name, i) => {
-      const d = addDays(ws, i);
-      return `<button type="button" role="tab" class="pf-tab ${d === t ? 'pf-now' : ''}" data-i="${i}" aria-selected="${i === sel}" aria-label="${longDate(d)}">${name} ${Number(d.slice(8))}</button>`;
-    }).join('');
-
-    return `${topbar(arrows)}
-      <div class="pf-titleblock">
-        <p class="pf-eyebrow">${ws === thisWeek ? '이번 주' : '다음 주'}</p>
-        <h1 class="pf-title">${weekTitle(ws)}</h1>
+    const days = pagerDays(t);
+    pagerState = { days, t };
+    const tabs = days.map((d, i) => `<button type="button" role="tab" class="pf-tab ${d === t ? 'pf-now' : ''}" data-i="${i}" aria-selected="false" aria-label="${longDate(d)}">${WEEKDAYS[dow(d)]} ${Number(d.slice(8))}</button>`).join('');
+    return `${topbar('<button type="button" class="pf-action" id="btn-today" aria-label="오늘로 돌아가기">오늘</button>')}
+      <div class="pf-titleblock day-head">
+        <p class="pf-eyebrow" id="day-eyebrow"></p>
+        <h1 class="day-title" id="day-title"></h1>
       </div>
-      <div class="pf-tabs week-tabs" role="tablist" aria-label="요일">${tabs}</div>
-      ${w ? `<section id="day-detail"></section>
-        <p class="footnote"><a href="${esc(imageUrl(ws, w))}" target="_blank" rel="noopener">원본 식단표 보기</a></p>` : empty()}
+      <div class="pf-tabs day-tabs" id="day-tabs" role="tablist" aria-label="날짜">${tabs}</div>
+      <div class="pager" id="pager">${days.map(slide).join('')}</div>
       ${adminLink}`;
   }
 
-  function bindWeek() {
-    const detail = document.getElementById('day-detail');
-    if (!detail) return;
-    const weekStart = currentWeekStart;
-    const show = (i) => {
-      document.querySelectorAll('.pf-tab').forEach((b) => b.setAttribute('aria-selected', String(Number(b.dataset.i) === i)));
-      const d = addDays(weekStart, i);
-      const closed = (index.weeks[weekStart].closed || []).includes(i);
-      detail.innerHTML = `<div class="pf-label"><span>${longDate(d)}</span>${d === todayKst() ? '<span class="pf-now">오늘</span>' : ''}</div>
-        ${closed ? `<div class="empty"><h2 class="empty-title">메뉴가 없습니다.</h2><p class="empty-sub">휴무</p></div>` : `<div class="menu-photo">${crop(weekStart, i)}</div>`}`;
+  function bindHome() {
+    const { days, t } = pagerState;
+    const pager = document.getElementById('pager');
+    const tabsEl = document.getElementById('day-tabs');
+    const tabs = [...tabsEl.querySelectorAll('.pf-tab')];
+    const $eyebrow = document.getElementById('day-eyebrow');
+    const $title = document.getElementById('day-title');
+    const $today = document.getElementById('btn-today');
+    const todayIdx = days.indexOf(t);
+    let cur = -1;
+    const set = (i) => {
+      if (i === cur || i < 0 || i >= days.length) return;
+      cur = i;
+      const d = days[i];
+      tabs.forEach((b, j) => b.setAttribute('aria-selected', String(j === i)));
+      tabsEl.scrollTo({ left: tabs[i].offsetLeft - (tabsEl.clientWidth - tabs[i].offsetWidth) / 2, behavior: 'smooth' });
+      $eyebrow.textContent = dayLabel(d, t);
+      $eyebrow.classList.toggle('pf-now', d === t);
+      $title.textContent = longDate(d);
+      $today.style.visibility = d === t ? 'hidden' : 'visible';
     };
-    document.querySelectorAll('.pf-tab').forEach((b) => {
-      b.addEventListener('click', () => show(Number(b.dataset.i)));
-    });
-    show(Number(document.querySelector('.pf-tab[aria-selected="true"]')?.dataset.i || 0));
+    const go = (i, smooth = true) => pager.scrollTo({ left: i * pager.clientWidth, behavior: smooth ? 'smooth' : 'instant' });
+    tabs.forEach((b, i) => b.addEventListener('click', () => go(i)));
+    $today.addEventListener('click', () => go(todayIdx));
+    pager.addEventListener('scroll', () => set(Math.round(pager.scrollLeft / pager.clientWidth)), { passive: true });
+    onResize = () => go(cur, false); // 회전·크기 변경 시 보던 날에 그대로 맞춤
+    go(todayIdx, false); // 열 때는 항상 오늘에 맞춤
+    set(todayIdx);
   }
 
   // ── GitHub API (담당자 전용) ─────────────────────────────
@@ -487,7 +491,7 @@
         index = idx;
         localImages[ws] = img.dataUrl;
         flash = '저장했어요. 다른 사람 화면에는 1~2분 뒤에 반영됩니다.';
-        location.hash = `#/week?w=${ws}`;
+        location.hash = '#/';
       } catch (e) {
         if (e.code === 'auth') gh.token = null;
         showError(e.code || 'api', e.message, !['format', 'size', 'auth'].includes(e.code));
@@ -502,6 +506,8 @@
 
   // ── 라우터 ────────────────────────────────────────────
   let flash = null;
+  let onResize = null;
+  window.addEventListener('resize', () => onResize?.());
   const pageHandlers = {};
   window.addEventListener('paste', (e) => pageHandlers.paste?.(e));
   window.addEventListener('dragover', (e) => e.preventDefault());
@@ -511,15 +517,18 @@
     const [path, qs] = (location.hash.slice(1) || '/').split('?');
     const params = new URLSearchParams(qs);
     pageHandlers.paste = pageHandlers.drop = null;
-    document.querySelectorAll('.pf-tabbar a').forEach((a) => (a.dataset.tab === ({ '/': 'home', '/week': 'week' })[path] ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
+    onResize = null;
+    if (path === '/week') return void (location.hash = '#/'); // 이번 주 탭은 없어짐
     if (!index) await loadIndex();
 
-    const views = { '/': viewHome, '/week': viewWeek, '/upload': viewUpload };
+    const views = { '/': viewHome, '/upload': viewUpload };
     const view = views[path] || viewHome;
-    $main.innerHTML = (flash ? `<p class="alert alert-ok">${esc(flash)}</p>` : '') + view(params);
+    $main.classList.toggle('is-pager', view === viewHome);
+    $main.innerHTML = view(params);
+    if (flash) $main.querySelector('.pf-header')?.insertAdjacentHTML('afterend', `<p class="alert alert-ok">${esc(flash)}</p>`);
     flash = null;
     window.scrollTo(0, 0);
-    if (path === '/week') bindWeek();
+    if (view === viewHome) bindHome();
     if (path === '/upload') document.getElementById('token-form') ? bindTokenForm() : gh.repo() && bindUpload();
   }
 
