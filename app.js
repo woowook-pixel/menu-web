@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const APP_VERSION = '83360fbfdc05'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
+  const APP_VERSION = 'db803b541d1b'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
   const WEEKDAYS = '일월화수목금토';
   const DAY_NAMES = ['월', '화', '수', '목', '금'];
   const DEFAULT_LAYOUT = { cols: [0, 0.2, 0.4, 0.6, 0.8, 1], top: 0, bottom: 1 };
@@ -75,7 +75,7 @@
   function viewHome() {
     const t = todayKst();
     const today = dayEntry(t);
-    return `${topbar('<a class="pf-action" href="#/week">이번 주 →</a>')}
+    return `${topbar('<a class="pf-action" href="#/week">이번 주<pf-sym name="arrow-right"></pf-sym></a>')}
       <div class="pf-titleblock">
         <p class="pf-eyebrow pf-now">${longDate(t)}</p>
         <h1 class="pf-title">오늘의 메뉴</h1>
@@ -107,8 +107,8 @@
     const next = index.weeks[addDays(ws, 7)] ? addDays(ws, 7) : null;
 
     const arrows = [
-      prev ? `<a class="pf-action" href="#/week?w=${prev}" aria-label="이전 주">←</a>` : '<span class="pf-action is-disabled" aria-hidden="true">←</span>',
-      next ? `<a class="pf-action" href="#/week?w=${next}" aria-label="다음 주">→</a>` : '<span class="pf-action is-disabled" aria-hidden="true">→</span>',
+      prev ? `<a class="pf-action" href="#/week?w=${prev}" aria-label="이전 주"><pf-sym name="arrow-left"></pf-sym></a>` : '<span class="pf-action is-disabled" aria-hidden="true"><pf-sym name="arrow-left"></pf-sym></span>',
+      next ? `<a class="pf-action" href="#/week?w=${next}" aria-label="다음 주"><pf-sym name="arrow-right"></pf-sym></a>` : '<span class="pf-action is-disabled" aria-hidden="true"><pf-sym name="arrow-right"></pf-sym></span>',
     ].join('');
 
     const sel = ws <= t && t <= addDays(ws, 4) ? (dow(t) + 6) % 7 : 0; // 기본 선택: 오늘, 아니면 월요일
@@ -251,7 +251,7 @@
             <div class="pf-row group-row"><span class="ellipsis muted" id="file-info"></span></div>
             <button type="button" class="pf-row group-row group-btn" id="btn-equal">균등 분할</button>
             <button type="button" class="pf-row group-row group-btn" id="btn-replace">다른 사진으로 교체</button>
-            <button type="button" class="pf-row group-row group-btn" id="btn-remove">사진 삭제</button>
+            <button type="button" class="pf-row group-row group-btn" id="btn-remove"><span><pf-sym name="close"></pf-sym>사진 삭제</span></button>
           </div>
           <div class="pf-label">주</div>
           <div class="pf-list">
@@ -264,7 +264,7 @@
           <button type="button" class="pf-action link" id="btn-retry">다시 시도</button>
         </div>
         <button type="button" class="pf-btn-primary btn-gap" id="btn-save" disabled>저장</button>
-        <p class="footnote"><button type="button" id="btn-logout">토큰 지우기</button></p>
+        <p class="footnote"><button type="button" id="btn-logout"><pf-sym name="close"></pf-sym>토큰 지우기</button></p>
         <input type="file" id="in-gallery" accept="image/*" hidden>
         <input type="file" id="in-camera" accept="image/*" capture="environment" hidden>
       </div>`;
