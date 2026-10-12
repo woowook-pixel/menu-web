@@ -8,9 +8,10 @@ code { font: 500 0.9em var(--pf-mono); }
 [hidden] { display: none !important; }
 
 /* ── 화면 틀 ───────────────────────────────── */
-.pf-screen { max-width: 720px; margin: 0 auto; padding-top: max(var(--pf-top), calc(env(safe-area-inset-top) + 10px)); }
-.pf-actions { display: flex; gap: 4px; }
-.pf-action { display: inline-flex; align-items: center; justify-content: center; }
+.pf-screen { max-width: 720px; margin: 0 auto; }
+/* a·span 요소도 버튼처럼 44px 높이로 세로 가운데에 놓고, 오른쪽 끝 버튼은 글자 끝을 본문 오른쪽 선에 맞춤 */
+.pf-action { display: inline-flex; align-items: center; }
+.pf-actions .pf-action:last-child { justify-content: flex-end; }
 .pf-action.is-disabled { color: var(--pf-mute); cursor: default; }
 .pf-action.link { text-decoration: underline; text-underline-offset: 4px; }
 .pf-now::before { vertical-align: 1px; }

@@ -62,7 +62,7 @@
 
   const longDate = (iso) => { const [, m, d] = iso.split('-').map(Number); return `${m}월 ${d}일 ${WEEKDAYS[dow(iso)]}요일`; };
 
-  const topbar = (actions = '') => `<header class="pf-topbar"><span class="pf-wordmark">BITE</span><nav class="pf-actions">${actions}</nav></header>`;
+  const topbar = (actions = '') => `<header class="pf-header"><div class="pf-topbar"><span class="pf-wordmark">BITE</span><nav class="pf-actions">${actions}</nav></div></header>`;
 
   const empty = () => `
     <div class="empty">
