@@ -1,4 +1,4 @@
-/* Bite: design/tokens.css 위에 얹는 앱 전용 스타일 (라이트 모드만, 모서리·그림자·원형 없음) */
+/* Bite: 중앙 공통 CSS(personal-design-rho.vercel.app/v1/tokens.css) 위에 얹는 앱 전용 스타일 (라이트 모드만, 모서리·그림자·원형 없음) */
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; }
 body { word-break: keep-all; -webkit-font-smoothing: antialiased; }
