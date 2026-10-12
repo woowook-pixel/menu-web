@@ -11,7 +11,8 @@
    - `index.html`: 각 화면이 `BITE` 상단 바를 직접 그림, 글자만 있는 하단 탭 2개(오늘 / 이번 주), 시트형 확인창
    - `app.js`: 해시 라우팅 `#/`, `#/week`, `#/upload`. KST 날짜 계산, CSS 배경으로 칸 자르기, 업로드 편집기, GitHub Contents API 저장
    - `style.css`: 중앙 공통 CSS(`https://personal-design-rho.vercel.app/v1/tokens.css`, 버전 기록은 `design/APPLIED.md`) 위에 얹는 Bite 전용 스타일. 모서리·그림자·원형 없음, 라이트 모드만. Bite 적용 기준은 `design/BITE.md`
-   - `index.html`의 apple-touch-icon은 data 주소(`icon-180.png`를 base64로 변환)입니다. iOS 홈 화면 아이콘이 회색 글자 타일로 나오는 문제를 피하려는 것이며, `icon-180.png`를 바꾸면 이 값도 다시 만들어야 함
+   - 아이콘(apple-touch-icon, favicon, manifest icons)은 중앙 픽셀 아이콘 `https://personal-design-rho.vercel.app/icons/pixel/bite-*`를 가리킴. 저장소의 `icon*.png/svg`는 참조하지 않지만 남겨 둠
+   - 새 버전 알림: `scripts/stamp-version.py`가 앱 코드 해시를 `version.json`과 `app.js`의 `APP_VERSION`에 기록. 코드를 바꾸면 이 스크립트를 실행해 함께 커밋하고(안 해도 `.github/workflows/stamp-version.yml`이 main 푸시 후 대신 커밋), 사진 업로드(data/)는 영향 없음
    - `sw.js`: PWA 캐시. 이미지는 캐시 우선이라 아이콘·이미지를 바꾸면 `CACHE` 이름(현재 `menu-v4`)과 `?v=` 값(현재 4)을 올려야 함
    - `config.js`: 저장소 이름. 비워 두면 Pages 주소에서 자동 인식
    - `data/index.json` + `data/<월요일>.jpg`: 주별 원본 사진 1장과 열 경계(layout 비율), 휴무일

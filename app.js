@@ -6,6 +6,7 @@
 (() => {
   'use strict';
 
+  const APP_VERSION = '83360fbfdc05'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
   const WEEKDAYS = '일월화수목금토';
   const DAY_NAMES = ['월', '화', '수', '목', '금'];
   const DEFAULT_LAYOUT = { cols: [0, 0.2, 0.4, 0.6, 0.8, 1], top: 0, bottom: 1 };
@@ -531,6 +532,44 @@
     }
   });
   render();
+
+  // ── 새 버전 알림: /version.json이 이 코드의 APP_VERSION과 다르면 띠를 보임 ──
+  const $update = document.getElementById('update');
+  let dismissedVersion = null;
+  async function checkVersion() {
+    try {
+      const r = await fetch(`version.json?t=${Date.now()}`, { cache: 'no-store' });
+      if (!r.ok) return;
+      const { version } = await r.json();
+      if (!version || version === APP_VERSION || version === dismissedVersion) return;
+      $update.dataset.version = version;
+      $update.hidden = false;
+    } catch {} // 오프라인이거나 받지 못하면 아무것도 띄우지 않음
+  }
+  async function reloadForUpdate() {
+    try {
+      const reg = await navigator.serviceWorker?.getRegistration();
+      if (reg) {
+        await reg.update();
+        const w = reg.installing || reg.waiting;
+        if (w && w.state !== 'activated') {
+          await new Promise((done) => {
+            w.addEventListener('statechange', () => w.state === 'activated' && done());
+            setTimeout(done, 3000);
+          });
+        }
+      }
+    } catch {}
+    location.reload();
+  }
+  $update.querySelector('.pf-update-later').onclick = () => {
+    dismissedVersion = $update.dataset.version; // 이번 세션 동안 같은 버전은 다시 띄우지 않음
+    $update.hidden = true;
+  };
+  $update.querySelector('.pf-update-reload').onclick = reloadForUpdate;
+  document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && checkVersion());
+  setInterval(checkVersion, 5 * 60 * 1000);
+  checkVersion();
 
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 })();
