@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const APP_VERSION = 'db803b541d1b'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
+  const APP_VERSION = '1bd2fcad3e78'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
   const WEEKDAYS = '일월화수목금토';
   const DAY_NAMES = ['월', '화', '수', '목', '금'];
   const DEFAULT_LAYOUT = { cols: [0, 0.2, 0.4, 0.6, 0.8, 1], top: 0, bottom: 1 };
