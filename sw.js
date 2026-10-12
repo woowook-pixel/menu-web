@@ -11,6 +11,7 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   const url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== location.origin) return; // GitHub API 등은 건드리지 않음
+  if (url.pathname.endsWith('/version.json')) return; // 새 버전 확인은 항상 네트워크로 (오프라인이면 실패해 알림 없음)
 
   const put = (key) => (res) => {
     if (res.ok) {
@@ -32,5 +33,5 @@ self.addEventListener('fetch', (e) => {
     return;
   }
   // HTML/JS/CSS: 네트워크 우선 (배포 즉시 새 버전)
-  e.respondWith(fetch(req).then(put(req)).catch(() => caches.match(req, { ignoreSearch: true })));
+  e.respondWith(fetch(req, { cache: 'no-cache' }).then(put(req)).catch(() => caches.match(req, { ignoreSearch: true })));
 });

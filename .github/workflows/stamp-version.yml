@@ -1,0 +1,24 @@
+# 앱 코드가 바뀐 main 푸시마다 version.json과 app.js의 APP_VERSION을 맞춰 둔다.
+# 이미 맞아 있으면(PR에서 scripts/stamp-version.py를 실행했다면) 아무 커밋도 만들지 않는다.
+name: stamp version
+on:
+  push:
+    branches: [main]
+    paths: [index.html, app.js, style.css, sw.js, config.js, manifest.webmanifest]
+permissions:
+  contents: write
+jobs:
+  stamp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/stamp-version.py
+      - name: 바뀐 경우에만 커밋
+        run: |
+          git diff --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js version.json
+          git commit -m "버전 갱신"
+          git pull --rebase origin main
+          git push
