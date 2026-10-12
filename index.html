@@ -16,18 +16,19 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="https://personal-design-rho.vercel.app/v1/tokens.css">
   <link rel="stylesheet" href="style.css">
+  <script src="https://personal-design-rho.vercel.app/v1/symbols.js" defer></script>
   <title>Bite</title>
 </head>
 <body>
   <main class="pf-screen" id="main"><div class="skeleton"></div></main>
   <nav class="pf-tabbar" aria-label="화면 전환">
-    <a href="#/" data-tab="home">오늘</a>
-    <a href="#/week" data-tab="week">이번 주</a>
+    <a href="#/" data-tab="home"><pf-sym name="today"></pf-sym><span>오늘</span></a>
+    <a href="#/week" data-tab="week"><pf-sym name="calendar"></pf-sym><span>이번 주</span></a>
   </nav>
   <div class="pf-update" id="update" role="status" hidden>
     <span class="pf-update-text">새 버전이 있습니다</span>
     <button type="button" class="pf-update-later">나중에</button>
-    <button type="button" class="pf-update-reload">새로고침</button>
+    <button type="button" class="pf-update-reload"><pf-sym name="refresh"></pf-sym>새로고침</button>
   </div>
 
   <dialog id="confirm" class="dialog pf-sheet">

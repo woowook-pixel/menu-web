@@ -10,7 +10,7 @@ code { font: 500 0.9em var(--pf-mono); }
 /* ── 화면 틀 ───────────────────────────────── */
 .pf-screen { max-width: 720px; margin: 0 auto; }
 /* a·span 요소도 버튼처럼 44px 높이로 세로 가운데에 놓고, 오른쪽 끝 버튼은 글자 끝을 본문 오른쪽 선에 맞춤 */
-.pf-action { display: inline-flex; align-items: center; }
+.pf-action { display: inline-flex; align-items: center; gap: 6px; }
 .pf-actions .pf-action:last-child { justify-content: flex-end; }
 .pf-action.is-disabled { color: var(--pf-mute); cursor: default; }
 .pf-action.link { text-decoration: underline; text-underline-offset: 4px; }
@@ -29,7 +29,7 @@ code { font: 500 0.9em var(--pf-mono); }
 
 /* ── 하단 탭바 (글자만) ─────────────────────── */
 .pf-tabbar { padding-left: max(var(--pf-side), calc((100% - 720px) / 2)); padding-right: max(var(--pf-side), calc((100% - 720px) / 2)); }
-.pf-tabbar a { flex: 1; height: var(--pf-touch); display: flex; align-items: center; justify-content: center; font: 500 12px/1 var(--pf-font); letter-spacing: 0.06em; color: var(--pf-mute); }
+.pf-tabbar a { flex: 1; min-height: var(--pf-touch); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font: 500 12px/1 var(--pf-font); letter-spacing: 0.06em; color: var(--pf-mute); }
 .pf-tabbar a[aria-current="page"] { font-weight: 800; color: var(--pf-black); }
 
 /* ── 이번 주: 요일 밑줄 탭 ──────────────────── */
