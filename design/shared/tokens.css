@@ -92,25 +92,6 @@ body { margin: 0; background: var(--pf-white); color: var(--pf-black); font: var
 .pf-screen:has(> .pf-header) { padding-top: 0; }              /* 헤더가 안전 영역을 맡으므로 화면 위 여백 제거 */
 .pf-tabbar button { display: flex; align-items: center; justify-content: center; text-align: center; }
 
-/* ---------- v1.2 추가: 기호 (CHANGELOG 005에서 사용 예정) ---------- */
-.pf-sym { display: inline-block; width: 1.25em; height: 1.25em; flex-shrink: 0; background-color: currentColor; -webkit-mask: var(--pf-sym-src) center / contain no-repeat; mask: var(--pf-sym-src) center / contain no-repeat; vertical-align: -0.25em; }
-.pf-sym-arrow-right { --pf-sym-src: url("symbols/arrow-right.svg"); }
-.pf-sym-arrow-left { --pf-sym-src: url("symbols/arrow-left.svg"); }
-.pf-sym-arrow-down { --pf-sym-src: url("symbols/arrow-down.svg"); }
-.pf-sym-arrow-up-right { --pf-sym-src: url("symbols/arrow-up-right.svg"); }
-.pf-sym-plus { --pf-sym-src: url("symbols/plus.svg"); }
-.pf-sym-star { --pf-sym-src: url("symbols/star.svg"); }
-.pf-sym-play { --pf-sym-src: url("symbols/play.svg"); }
-.pf-sym-stop { --pf-sym-src: url("symbols/stop.svg"); }
-.pf-sym-refresh { --pf-sym-src: url("symbols/refresh.svg"); }
-.pf-sym-search { --pf-sym-src: url("symbols/search.svg"); }
-.pf-sym-listen { --pf-sym-src: url("symbols/listen.svg"); }
-.pf-sym-read { --pf-sym-src: url("symbols/read.svg"); }
-.pf-sym-archive { --pf-sym-src: url("symbols/archive.svg"); }
-.pf-sym-calendar { --pf-sym-src: url("symbols/calendar.svg"); }
-.pf-sym-more { --pf-sym-src: url("symbols/more.svg"); }
-.pf-sym-settings { --pf-sym-src: url("symbols/settings.svg"); }
-
 /* ---------- v1.2 추가: 업데이트 알림 띠 (CHANGELOG 003) ---------- */
 .pf-update { position: fixed; left: var(--pf-side); right: var(--pf-side); bottom: calc(var(--pf-tabbar) + 12px); z-index: 50; height: 56px; padding: 0 6px 0 16px; background: var(--pf-black); color: var(--pf-white); display: flex; align-items: center; gap: 12px; }
 .pf-update[hidden] { display: none; }
@@ -127,6 +108,7 @@ pf-sym svg { display: block; }
 .pf-row > pf-sym:last-child { width: 22px; height: 22px; }
 .pf-tabbar button { flex-direction: column; gap: 4px; }
 .pf-tabbar pf-sym { width: 22px; height: 22px; }
+
 /* ---------- v1.4: 제목 줄 배치, 보조 라벨 오른쪽 (CHANGELOG 009) ---------- */
 .pf-titleblock { flex-direction: row; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; column-gap: 16px; row-gap: 8px; }
 .pf-titleblock .pf-title { order: 1; min-width: 0; }
