@@ -1,4 +1,4 @@
-/* Bite: 중앙 공통 CSS(personal-design-rho.vercel.app/v1/tokens.css) 위에 얹는 앱 전용 스타일 (라이트 모드만, 모서리·그림자·원형 없음) */
+/* Bite: design/shared/tokens.css(공통) 위에 얹는 앱 전용 스타일 (라이트 모드만, 모서리·그림자·원형 없음) */
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; }
 body { word-break: keep-all; -webkit-font-smoothing: antialiased; }
@@ -29,8 +29,7 @@ code { font: 500 0.9em var(--pf-mono); }
 /* ── 오늘 고정 + 스와이프 ───────────────────── */
 .pf-screen { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
 .pf-screen.is-pager { height: 100dvh; display: flex; flex-direction: column; padding-bottom: 0; overflow: hidden; }
-.day-head { padding: 12px 0 8px; gap: 6px; }
-.day-title { margin: 0; font: var(--pf-heading); letter-spacing: -0.02em; }
+.day-title { font: var(--pf-heading); letter-spacing: -0.02em; } /* 제목 크기만 앱 예외(사진 영역 확보) */
 .day-tabs .pf-tab { padding: 0 6px; cursor: pointer; }
 .day-tabs { gap: 12px; flex: none; scrollbar-width: none; }
 .day-tabs::-webkit-scrollbar { display: none; }

@@ -53,7 +53,5 @@
 
 ## 아이콘
 
-- `icons/bite.svg` 원본
-- `icons/bite-180.png` → apple-touch-icon
-- `icons/bite-192.png`, `icons/bite-512.png` → manifest icons(있다면)
+- 아이콘은 `design/shared/icons/`(자동 동기화)를 쓴다: `bite.svg` favicon, `apple-touch-icon.datauri.txt` → apple-touch-icon, `bite-192.png`, `bite-512.png` → manifest icons
 - `theme_color`, `background_color`는 #FFFFFF
