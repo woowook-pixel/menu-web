@@ -10,9 +10,9 @@
 2. 현재 구조 (빌드 도구 없음, 순수 HTML/JS/CSS)
    - `index.html`: 각 화면이 `BITE` 상단 바를 직접 그림, 하단 탭 없음(한 화면에서 스와이프), 시트형 확인창
    - `app.js`: 해시 라우팅 `#/`, `#/week`, `#/upload`. KST 날짜 계산, CSS 배경으로 칸 자르기, 업로드 편집기, GitHub Contents API 저장
-   - `style.css`: 중앙 공통 CSS(`https://personal-design-rho.vercel.app/v1/tokens.css`, 버전 기록은 `design/APPLIED.md`) 위에 얹는 Bite 전용 스타일. 모서리·그림자·원형 없음, 라이트 모드만. Bite 적용 기준은 `design/BITE.md`
-   - 아이콘(apple-touch-icon, favicon, manifest icons)은 중앙 픽셀 아이콘 `https://personal-design-rho.vercel.app/icons/pixel/bite-*`를 가리킴. 저장소의 `icon*.png/svg`는 참조하지 않지만 남겨 둠
-   - 새 버전 알림: `scripts/stamp-version.py`가 앱 코드 해시를 `version.json`과 `app.js`의 `APP_VERSION`에 기록. 코드를 바꾸면 이 스크립트를 실행해 함께 커밋하고(안 해도 `.github/workflows/stamp-version.yml`이 main 푸시 후 대신 커밋), 사진 업로드(data/)는 영향 없음
+   - `style.css`: 공통 CSS(`design/shared/tokens.css`, 자동 동기화라 직접 고치지 않음. 적용 기록은 `design/APPLIED.md`) 위에 얹는 Bite 전용 스타일. 모서리·그림자·원형 없음, 라이트 모드만. Bite 적용 기준은 `design/BITE.md`
+   - 아이콘: favicon·manifest는 `design/shared/icons/`를 가리키고, apple-touch-icon은 `scripts/stamp-version.py`가 `design/shared/icons/apple-touch-icon.datauri.txt`를 읽어 index.html에 그대로 넣음(head에 1개)
+   - 새 버전 알림: `scripts/stamp-version.py`가 앱 코드(공통 파일 `design/shared/tokens.css`, `symbols.js` 포함) 해시를 `version.json`과 `app.js`의 `APP_VERSION`에 기록. 코드를 바꾸면 이 스크립트를 실행해 함께 커밋하고(안 해도 `.github/workflows/stamp-version.yml`이 main 푸시 후 대신 커밋), 사진 업로드(data/)는 영향 없음
    - `sw.js`: PWA 캐시. 이미지는 캐시 우선이라 아이콘·이미지를 바꾸면 `CACHE` 이름(현재 `menu-v4`)과 `?v=` 값(현재 4)을 올려야 함
    - `config.js`: 저장소 이름. 비워 두면 Pages 주소에서 자동 인식
    - `data/index.json` + `data/<월요일>.jpg`: 주별 원본 사진 1장과 열 경계(layout 비율), 휴무일
@@ -21,7 +21,7 @@
    - **홈(`#/`)**: 열면 항상 오늘에 맞춰지고, 좌우 스와이프(scroll-snap)나 위의 날짜 밑줄 탭으로 다른 날을 봄. 올라와 있는 주의 평일 + 오늘이 슬라이드이고 지난 주는 없음. 메뉴 사진은 화면(가로·세로)에 딱 맞게 축소·확대. `#/week`는 `#/`로 이동
    - **업로드**(`#/upload`, 화면 맨 아래 링크): 담당자가 fine-grained GitHub 토큰을 브라우저에 한 번 입력. 사진 선택(촬영·갤러리·드래그·붙여넣기) → 경계선 드래그(직전 layout을 불러옴) → 1600px/JPEG 0.85로 줄임 → 사진과 `index.json`을 커밋. 같은 주가 있으면 덮어쓰기 확인
    - 저장할 때 **이번 주보다 이전 주는 목록과 사진 모두 자동 삭제**(사용자 요청: 이력 불필요)
-4. 앱 이름은 Bite. 아이콘은 `design/icons/bite*` 파일(`icon.svg`, `icon-180/192/512.png`로 복사해 사용)
+4. 앱 이름은 Bite. 아이콘은 `design/shared/icons/bite*`
 5. 실제 운영: 사용자가 2026-09-28 주 식단을 사이트에서 직접 올렸고, GitHub 저장이 정상 동작함을 확인함
 
 ## 남은 일 / 미결정

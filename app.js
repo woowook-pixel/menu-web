@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const APP_VERSION = 'd2ec165b67f7'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
+  const APP_VERSION = '69724fca9066'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
   const WEEKDAYS = '일월화수목금토';
   const DAY_NAMES = ['월', '화', '수', '목', '금'];
   const DEFAULT_LAYOUT = { cols: [0, 0.2, 0.4, 0.6, 0.8, 1], top: 0, bottom: 1 };
@@ -110,9 +110,9 @@
     pagerState = { days, t };
     const tabs = days.map((d, i) => `<button type="button" role="tab" class="pf-tab ${d === t ? 'pf-now' : ''}" data-i="${i}" aria-selected="false" aria-label="${longDate(d)}">${WEEKDAYS[dow(d)]} ${Number(d.slice(8))}</button>`).join('');
     return `${topbar('<button type="button" class="pf-action" id="btn-today" aria-label="오늘로 돌아가기">오늘</button>')}
-      <div class="pf-titleblock day-head">
+      <div class="pf-titleblock">
         <p class="pf-eyebrow" id="day-eyebrow"></p>
-        <h1 class="day-title" id="day-title"></h1>
+        <h1 class="pf-title day-title" id="day-title"></h1>
       </div>
       <div class="pf-tabs day-tabs" id="day-tabs" role="tablist" aria-label="날짜">${tabs}</div>
       <div class="pager" id="pager">${days.map(slide).join('')}</div>

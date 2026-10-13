@@ -12,11 +12,12 @@
 ```
 index.html        화면 틀 (덮어쓰기 확인창, 새 버전 알림 띠)
 app.js            모든 로직: 날짜(KST), 화면(오늘·주간·업로드), 칸 자르기(CSS), 업로드 편집기, GitHub 저장
-style.css         Bite 전용 스타일 (공통 토큰은 중앙 CSS https://personal-design-rho.vercel.app/v1/tokens.css)
-design/           Bite 적용 기준(BITE.md), 아이콘 원본, 적용 중인 공통 CSS 버전(APPLIED.md)
+style.css         Bite 전용 스타일 (공통 토큰은 design/shared/tokens.css)
+design/shared/    공통 디자인 파일(자동 동기화, 직접 고치지 않음)
+design/           Bite 적용 기준(BITE.md), 적용 기록(APPLIED.md)
 config.js         저장소 이름 (보통 비워 둠: Pages 주소에서 자동 인식)
 sw.js             오프라인 캐시 (마지막으로 본 식단은 오프라인에서도 보임)
-manifest.webmanifest, icon*.png/svg   PWA
+manifest.webmanifest   PWA (아이콘은 design/shared/icons/)
 .nojekyll         Pages가 파일을 가공하지 않게
 data/
   index.json      주별 목록 { weeks: { "2026-09-28": { image, width, height, layout, closed, … } } }

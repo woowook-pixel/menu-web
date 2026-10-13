@@ -8,8 +8,8 @@
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",
   "icons": [
-    { "src": "https://personal-design-rho.vercel.app/icons/pixel/bite.svg", "sizes": "any", "type": "image/svg+xml" },
-    { "src": "https://personal-design-rho.vercel.app/icons/pixel/bite-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "https://personal-design-rho.vercel.app/icons/pixel/bite-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "design/shared/icons/bite.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "design/shared/icons/bite-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "design/shared/icons/bite-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }

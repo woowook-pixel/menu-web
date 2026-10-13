@@ -4,7 +4,7 @@ name: stamp version
 on:
   push:
     branches: [main]
-    paths: [index.html, app.js, style.css, sw.js, config.js, manifest.webmanifest]
+    paths: [index.html, app.js, style.css, sw.js, config.js, manifest.webmanifest, 'design/shared/**']
 permissions:
   contents: write
 jobs:
@@ -18,7 +18,7 @@ jobs:
           git diff --quiet && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add app.js version.json
+          git add app.js index.html version.json
           git commit -m "버전 갱신"
           git pull --rebase origin main
           git push
