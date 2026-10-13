@@ -127,3 +127,7 @@ pf-sym svg { display: block; }
 .pf-row > pf-sym:last-child { width: 22px; height: 22px; }
 .pf-tabbar button { flex-direction: column; gap: 4px; }
 .pf-tabbar pf-sym { width: 22px; height: 22px; }
+/* ---------- v1.4: 제목 줄 배치, 보조 라벨 오른쪽 (CHANGELOG 009) ---------- */
+.pf-titleblock { flex-direction: row; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; column-gap: 16px; row-gap: 8px; }
+.pf-titleblock .pf-title { order: 1; min-width: 0; }
+.pf-titleblock .pf-eyebrow { order: 2; margin-left: auto; padding-bottom: 6px; }
