@@ -1,0 +1,129 @@
+/* Personal App Family: 공통 디자인 토큰 v1
+   폰트 로드 (index.html <head>):
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;600;700&display=swap">
+*/
+:root {
+  /* Color */
+  --pf-black: #111111;      /* 글자, 주 버튼, 섹션 시작선, 아이콘 바탕 */
+  --pf-white: #FFFFFF;      /* 화면 바탕 */
+  --pf-gray: #6E6E6E;       /* 보조 텍스트 */
+  --pf-mute: #9A9A9A;       /* 비활성 탭 */
+  --pf-line: #E6E6E6;       /* 목록 구분선 */
+  --pf-ember: #FF7A3D;      /* 지금, 오늘, 현재 상태 표시 전용 */
+  --pf-info-red: #D7262E;   /* 정보 색 예외 (버스 노선 등) */
+  --pf-dim: rgba(17, 17, 17, 0.35); /* 시트 뒤 배경 */
+
+  /* Type */
+  --pf-font: 'Archivo', 'Noto Sans KR', system-ui, sans-serif;
+  --pf-mono: 'IBM Plex Mono', ui-monospace, monospace; /* 타브 악보처럼 글자 정렬이 필요한 곳만 */
+  --pf-wordmark: 900 15px/1 var(--pf-font);   /* 대문자, letter-spacing 0.14em */
+  --pf-title: 900 44px/1.02 var(--pf-font);   /* letter-spacing -0.035em */
+  --pf-heading: 900 30px/1.1 var(--pf-font);  /* 시트 제목, 빈 상태 제목 */
+  --pf-body: 500 16px/1.4 var(--pf-font);
+  --pf-sub: 400 12px/1.4 var(--pf-font);
+  --pf-label: 800 11px/1 var(--pf-font);      /* letter-spacing 0.12em */
+  --pf-action: 700 12px/1 var(--pf-font);     /* 텍스트 버튼, letter-spacing 0.08em */
+
+  /* Layout */
+  --pf-side: 20px;          /* 화면 좌우 여백 */
+  --pf-top: 54px;           /* 상단 안전영역 아래 시작 */
+  --pf-touch: 44px;         /* 최소 터치 영역 */
+  --pf-row: 52px;           /* 목록 행 최소 높이 */
+  --pf-radius: 0;           /* 모서리 없음 */
+  --pf-tabbar: 80px;
+}
+
+body { margin: 0; background: var(--pf-white); color: var(--pf-black); font: var(--pf-body); }
+
+.pf-screen { padding: var(--pf-top) var(--pf-side) calc(var(--pf-tabbar) + 24px); }
+
+/* 상단 바: 대문자 앱 이름 + 텍스트 버튼 */
+.pf-topbar { height: var(--pf-touch); display: flex; align-items: center; justify-content: space-between; }
+.pf-wordmark { font: var(--pf-wordmark); letter-spacing: 0.14em; text-transform: uppercase; }
+.pf-action { min-width: var(--pf-touch); height: var(--pf-touch); padding: 0 2px; border: 0; background: none; font: var(--pf-action); letter-spacing: 0.08em; color: var(--pf-black); }
+
+/* 제목 블록 */
+.pf-titleblock { padding: 36px 0 28px; display: flex; flex-direction: column; gap: 10px; }
+.pf-eyebrow { font: 700 12px/1 var(--pf-font); letter-spacing: 0.08em; color: var(--pf-gray); display: flex; align-items: center; gap: 8px; }
+.pf-title { font: var(--pf-title); letter-spacing: -0.035em; margin: 0; }
+
+/* 현재 표시: Ember 사각 점 */
+.pf-now::before { content: ""; width: 7px; height: 7px; background: var(--pf-ember); display: inline-block; margin-right: 6px; }
+
+/* 밑줄 탭 (세그먼트) */
+.pf-tabs { display: flex; gap: 22px; box-shadow: inset 0 -1px 0 var(--pf-line); overflow-x: auto; }
+.pf-tab { height: var(--pf-touch); padding: 0; border: 0; background: none; font: 500 14px/1 var(--pf-font); color: var(--pf-mute); white-space: nowrap; }
+.pf-tab[aria-selected="true"] { font-weight: 800; color: var(--pf-black); box-shadow: inset 0 -2px 0 var(--pf-black); }
+
+/* 섹션 라벨 + 목록 */
+.pf-label { display: flex; justify-content: space-between; align-items: center; padding: 26px 0 8px; font: var(--pf-label); letter-spacing: 0.12em; }
+.pf-list { box-shadow: inset 0 1px 0 var(--pf-black); }
+.pf-row { display: flex; align-items: center; gap: 14px; min-height: var(--pf-row); padding: 8px 0; box-shadow: inset 0 -1px 0 var(--pf-line); }
+.pf-row-sub { font: var(--pf-sub); color: var(--pf-gray); }
+
+/* 버튼, 입력 */
+.pf-btn-primary { width: 100%; height: 56px; border: 0; border-radius: 0; background: var(--pf-black); color: var(--pf-white); font: 800 13px/1 var(--pf-font); letter-spacing: 0.12em; }
+.pf-input { height: 52px; display: flex; align-items: center; gap: 12px; box-shadow: inset 0 -1px 0 var(--pf-black); }
+.pf-input input { flex: 1; min-width: 0; border: 0; padding: 0; background: none; font: 500 17px/1 var(--pf-font); color: var(--pf-black); outline: none; }
+
+/* 하단 탭바: 글자만 */
+.pf-tabbar { position: fixed; left: 0; right: 0; bottom: 0; height: var(--pf-tabbar); padding: 6px var(--pf-side) env(safe-area-inset-bottom, 30px); box-sizing: border-box; background: var(--pf-white); box-shadow: inset 0 1px 0 var(--pf-black); display: flex; }
+.pf-tabbar button { flex: 1; height: var(--pf-touch); border: 0; background: none; font: 500 12px/1 var(--pf-font); letter-spacing: 0.06em; color: var(--pf-mute); }
+.pf-tabbar button[aria-current="page"] { font-weight: 800; color: var(--pf-black); }
+
+/* 시트 */
+.pf-sheet { background: var(--pf-white); box-shadow: inset 0 2px 0 var(--pf-black); padding: 26px var(--pf-side) 34px; }
+
+:focus-visible { outline: 2px solid var(--pf-black); outline-offset: 2px; }
+
+/* ---------- v1.1 추가: 상단 헤더 고정 (CHANGELOG 002) ---------- */
+/* 필요 조건: <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"> */
+.pf-header {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--pf-white);
+  margin: 0 calc(var(--pf-side) * -1);
+  padding: env(safe-area-inset-top, 0px) var(--pf-side) 0;   /* 노치·다이내믹 아일랜드 바로 아래에서 시작 */
+}
+.pf-header .pf-topbar { height: var(--pf-touch); }            /* 높이 44px 고정 */
+.pf-header .pf-wordmark { font: var(--pf-wordmark); letter-spacing: 0.14em; text-transform: uppercase; }
+.pf-actions { display: flex; align-items: center; gap: 20px; }
+.pf-actions .pf-action:last-child { text-align: right; padding-right: 0; } /* 마지막 버튼 글자를 오른쪽 여백선에 맞춤 */
+.pf-header + .pf-titleblock { padding-top: 24px; }            /* 헤더와 제목 사이 간격 고정 */
+.pf-screen:has(> .pf-header) { padding-top: 0; }              /* 헤더가 안전 영역을 맡으므로 화면 위 여백 제거 */
+.pf-tabbar button { display: flex; align-items: center; justify-content: center; text-align: center; }
+
+/* ---------- v1.2 추가: 기호 (CHANGELOG 005에서 사용 예정) ---------- */
+.pf-sym { display: inline-block; width: 1.25em; height: 1.25em; flex-shrink: 0; background-color: currentColor; -webkit-mask: var(--pf-sym-src) center / contain no-repeat; mask: var(--pf-sym-src) center / contain no-repeat; vertical-align: -0.25em; }
+.pf-sym-arrow-right { --pf-sym-src: url("symbols/arrow-right.svg"); }
+.pf-sym-arrow-left { --pf-sym-src: url("symbols/arrow-left.svg"); }
+.pf-sym-arrow-down { --pf-sym-src: url("symbols/arrow-down.svg"); }
+.pf-sym-arrow-up-right { --pf-sym-src: url("symbols/arrow-up-right.svg"); }
+.pf-sym-plus { --pf-sym-src: url("symbols/plus.svg"); }
+.pf-sym-star { --pf-sym-src: url("symbols/star.svg"); }
+.pf-sym-play { --pf-sym-src: url("symbols/play.svg"); }
+.pf-sym-stop { --pf-sym-src: url("symbols/stop.svg"); }
+.pf-sym-refresh { --pf-sym-src: url("symbols/refresh.svg"); }
+.pf-sym-search { --pf-sym-src: url("symbols/search.svg"); }
+.pf-sym-listen { --pf-sym-src: url("symbols/listen.svg"); }
+.pf-sym-read { --pf-sym-src: url("symbols/read.svg"); }
+.pf-sym-archive { --pf-sym-src: url("symbols/archive.svg"); }
+.pf-sym-calendar { --pf-sym-src: url("symbols/calendar.svg"); }
+.pf-sym-more { --pf-sym-src: url("symbols/more.svg"); }
+.pf-sym-settings { --pf-sym-src: url("symbols/settings.svg"); }
+
+/* ---------- v1.2 추가: 업데이트 알림 띠 (CHANGELOG 003) ---------- */
+.pf-update { position: fixed; left: var(--pf-side); right: var(--pf-side); bottom: calc(var(--pf-tabbar) + 12px); z-index: 50; height: 56px; padding: 0 6px 0 16px; background: var(--pf-black); color: var(--pf-white); display: flex; align-items: center; gap: 12px; }
+.pf-update[hidden] { display: none; }
+.pf-update::before { content: ""; width: 7px; height: 7px; background: var(--pf-ember); flex-shrink: 0; }
+.pf-update-text { flex: 1; font: 700 14px/1.2 var(--pf-font); }
+.pf-update button { height: var(--pf-touch); padding: 0 10px; border: 0; background: none; font: 800 12px/1 var(--pf-font); letter-spacing: 0.08em; color: var(--pf-white); }
+.pf-update button.pf-update-later { color: var(--pf-mute); font-weight: 700; }
+.pf-screen.pf-no-tabbar ~ .pf-update, .pf-update.pf-no-tabbar { bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
+
+/* ---------- v1.3 추가: 기호 요소 (CHANGELOG 005, v1/symbols.js와 함께) ---------- */
+pf-sym { display: inline-block; width: 1.25em; height: 1.25em; flex-shrink: 0; vertical-align: -0.25em; color: inherit; }
+pf-sym svg { display: block; }
+.pf-action pf-sym, .pf-btn-primary pf-sym { margin-right: 6px; }
+.pf-row > pf-sym:last-child { width: 22px; height: 22px; }
+.pf-tabbar button { flex-direction: column; gap: 4px; }
+.pf-tabbar pf-sym { width: 22px; height: 22px; }
