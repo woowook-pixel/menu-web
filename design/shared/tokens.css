@@ -113,3 +113,7 @@ pf-sym svg { display: block; }
 .pf-titleblock { flex-direction: row; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; column-gap: 16px; row-gap: 8px; }
 .pf-titleblock .pf-title { order: 1; min-width: 0; }
 .pf-titleblock .pf-eyebrow { order: 2; margin-left: auto; padding-bottom: 6px; }
+
+/* ---------- v1.5: 워드마크 옆 작은 앱 아이콘 (CHANGELOG 011) ---------- */
+.pf-brand { display: inline-flex; align-items: center; gap: 8px; }
+.pf-brand-icon { width: 20px; height: 20px; display: block; flex-shrink: 0; }
