@@ -112,8 +112,8 @@ Bite(구 오늘 뭐 먹지), Script(구 On Air), Wayly, Lexi(구 사전), Pitch(
 
 ## 13. 앱 캐릭터
 
-- 앱마다 하나: Bite 밥그릇, Script 책, Wayly 버스, Lexi 사전, Pitch 클립형 튜너, Strum 기타 피크. 24칸 픽셀, 컬러, 4프레임 GIF.
-- 쓰는 곳: 최상위 화면 상단 바의 워드마크 오른쪽 한 곳. 24px, `.pf-brand-character`. 하위 화면("← 상위")에는 넣지 않는다.
-- 움직임 줄이기 설정이면 정지 이미지(-still.png)를 보인다.
+- 앱마다 하나: Bite 주먹밥, Script 라디오, Wayly 버스 옆모습, Lexi 돋보기, Pitch 반원 튜너 게이지, Strum 기타. 높이 14칸 픽셀, 가로 길이는 캐릭터마다 다름, 컬러, 4프레임 GIF.
+- 쓰는 곳: 최상위 화면 상단 바의 워드마크 오른쪽 한 곳. 높이 28px(픽셀 2배), 가로는 비율대로(`.pf-brand-character`). 하위 화면에는 넣지 않는다.
+- 움직임 줄이기 설정이면 정지 이미지(-still.png).
 - 장식이므로 alt는 비운다.
 

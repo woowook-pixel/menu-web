@@ -98,3 +98,16 @@
 - 함께: 일부 앱 상단 바가 흐리게 보이는 원인 점검과 제거.
 - 동기화 변경: sync-shared가 characters/<앱이름>.gif, -still.png를 design/shared/characters/로 복사한다.
 
+## 013 (2026-10-14) 탭바 잘림 수정, 상단 캐릭터 새 디자인
+
+- 대상: 전체
+- 탭바: 기호가 위, 글자가 아래로 바뀐 뒤 탭바 높이(80px 고정)가 모자라 iPhone에서 아래로 밀려 잘림. 높이를 58px + 하단 안전 영역으로 바꿔 해결(공통 CSS).
+- 캐릭터: 가로로 긴 새 디자인(14칸 높이, 2배 표시 = 높이 28px). Bite 주먹밥, Script 라디오, Wayly 버스 옆모습, Lexi 돋보기, Pitch 반원 튜너 게이지, Strum 기타.
+- 표시 크기(가로 x 세로 px):
+   - bite: 40 x 28
+   - script: 52 x 28
+   - wayly: 60 x 28
+   - lexi: 48 x 28
+   - pitch: 44 x 28
+   - strum: 68 x 28
+
