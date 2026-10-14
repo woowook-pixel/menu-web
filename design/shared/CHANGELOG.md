@@ -91,3 +91,10 @@
 - 대상: 전체
 - 내용: 최상위 화면 상단 바 왼쪽을 `.pf-brand > .pf-wordmark + img.pf-brand-icon` 구조로 바꾼다. 아이콘은 design/shared/icons/<앱이름>.svg(홈 아이콘과 같은 그림), 20px, 간격 8px. 하위 화면("← 상위")에는 넣지 않는다.
 
+## 012 (2026-10-13) 워드마크 옆 아이콘을 앱 캐릭터로, 상단 흐림 점검
+
+- 대상: 전체
+- 내용: 011의 워드마크 옆 작은 아이콘을 앱 캐릭터 GIF(characters/<앱이름>.gif, 24칸 픽셀, 4프레임)로 바꾼다. 24px(원본 192px의 1/8, 픽셀이 정확히 맞는 크기). 움직임 줄이기 설정 사용자에게는 첫 프레임 정지 이미지(<앱이름>-still.png).
+- 함께: 일부 앱 상단 바가 흐리게 보이는 원인 점검과 제거.
+- 동기화 변경: sync-shared가 characters/<앱이름>.gif, -still.png를 design/shared/characters/로 복사한다.
+
