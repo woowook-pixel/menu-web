@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  const APP_VERSION = '38026c33a760'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
+  const APP_VERSION = '029c1ee126ee'; // scripts/stamp-version.py가 기록 (version.json과 같은 값)
   const WEEKDAYS = '일월화수목금토';
   const DAY_NAMES = ['월', '화', '수', '목', '금'];
   const DEFAULT_LAYOUT = { cols: [0, 0.2, 0.4, 0.6, 0.8, 1], top: 0, bottom: 1 };
@@ -64,7 +64,7 @@
 
   const longDate = (iso) => { const [, m, d] = iso.split('-').map(Number); return `${m}월 ${d}일 ${WEEKDAYS[dow(iso)]}요일`; };
 
-  const topbar = (actions = '') => `<header class="pf-header"><div class="pf-topbar"><span class="pf-brand"><span class="pf-wordmark">BITE</span><picture><source srcset="design/shared/characters/bite-still.png" media="(prefers-reduced-motion: reduce)"><img class="pf-brand-character" src="design/shared/characters/bite.gif" alt="" width="24" height="24"></picture></span><nav class="pf-actions">${actions}</nav></div></header>`;
+  const topbar = (actions = '') => `<header class="pf-header"><div class="pf-topbar"><span class="pf-brand"><span class="pf-wordmark">BITE</span><picture><source srcset="design/shared/characters/bite-still.png" media="(prefers-reduced-motion: reduce)"><img class="pf-brand-character" src="design/shared/characters/bite.gif" alt="" width="40" height="28"></picture></span><nav class="pf-actions">${actions}</nav></div></header>`;
 
   const empty = () => `
     <div class="empty">
