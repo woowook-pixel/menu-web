@@ -117,3 +117,7 @@ pf-sym svg { display: block; }
 /* ---------- v1.5: 워드마크 옆 작은 앱 아이콘 (CHANGELOG 011) ---------- */
 .pf-brand { display: inline-flex; align-items: center; gap: 8px; }
 .pf-brand-icon { width: 20px; height: 20px; display: block; flex-shrink: 0; }
+
+/* ---------- v1.6: 상단 앱 캐릭터 (CHANGELOG 012) ---------- */
+.pf-brand-character { width: 24px; height: 24px; display: block; flex-shrink: 0; image-rendering: pixelated; image-rendering: crisp-edges; }
+
