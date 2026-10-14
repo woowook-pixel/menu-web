@@ -121,3 +121,9 @@ pf-sym svg { display: block; }
 /* ---------- v1.6: 상단 앱 캐릭터 (CHANGELOG 012) ---------- */
 .pf-brand-character { width: 24px; height: 24px; display: block; flex-shrink: 0; image-rendering: pixelated; image-rendering: crisp-edges; }
 
+/* ---------- v1.7: 탭바 높이와 상단 캐릭터 크기 (CHANGELOG 013) ---------- */
+:root { --pf-tabbar: calc(58px + env(safe-area-inset-bottom, 0px)); }
+.pf-tabbar { height: var(--pf-tabbar); padding: 4px var(--pf-side) env(safe-area-inset-bottom, 0px); }
+.pf-tabbar button { height: 54px; }
+.pf-brand-character { width: auto; height: 28px; }
+
