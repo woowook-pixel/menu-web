@@ -110,3 +110,10 @@ Bite(구 오늘 뭐 먹지), Script(구 On Air), Wayly, Lexi(구 사전), Pitch(
 - 탭바 위 검정 띠(`.pf-update`). 문구 "새 버전이 있습니다", 버튼 "나중에", "새로고침". Ember 점은 CSS가 자동으로 붙인다.
 - 탭바가 없는 화면은 `.pf-no-tabbar`를 붙여 하단 안전 영역 위에 띄운다.
 
+## 13. 앱 캐릭터
+
+- 앱마다 하나: Bite 밥그릇, Script 책, Wayly 버스, Lexi 사전, Pitch 클립형 튜너, Strum 기타 피크. 24칸 픽셀, 컬러, 4프레임 GIF.
+- 쓰는 곳: 최상위 화면 상단 바의 워드마크 오른쪽 한 곳. 24px, `.pf-brand-character`. 하위 화면("← 상위")에는 넣지 않는다.
+- 움직임 줄이기 설정이면 정지 이미지(-still.png)를 보인다.
+- 장식이므로 alt는 비운다.
+
